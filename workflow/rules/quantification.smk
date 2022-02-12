@@ -37,6 +37,7 @@ rule remove_mark_duplicates:
         results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.markdup.metrics"
     log:
         results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.markdup.log"
+    group: "mapping"
     params:
         header=temppath+"/{assembly}/{sample}_{unit}_{seq_type}.header",
         rehead_bam=temppath+"/{assembly}/{sample}_{unit}_{seq_type}.rehead.bam",

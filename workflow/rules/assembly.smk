@@ -214,6 +214,7 @@ rule bowtie_map_pe:
         setting=config["bowtie2"]["extra_settings"],
         prefix=results+"/assembly/{assembly}/final_contigs.fa"
     threads: config["bowtie2"]["threads"]
+    group: "mapping"
     resources:
         runtime=lambda wildcards, attempt: attempt**2*60*4
     conda:
