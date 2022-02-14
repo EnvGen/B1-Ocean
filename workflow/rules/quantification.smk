@@ -32,18 +32,18 @@ rule remove_mark_duplicates:
     input:
         results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.bam"
     output:
-        results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.markdup.bam",
-        results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.markdup.bam.bai",
+        temp(results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.markdup.bam"),
+        temp(results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.markdup.bam.bai"),
         results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.markdup.metrics"
     log:
         results+"/assembly/{assembly}/mapping/{sample}_{unit}_{seq_type}.markdup.log"
-    group: "mapping"
     params:
         header=temppath+"/{assembly}/{sample}_{unit}_{seq_type}.header",
         rehead_bam=temppath+"/{assembly}/{sample}_{unit}_{seq_type}.rehead.bam",
         temp_bam=temppath+"/{assembly}/{sample}_{unit}_{seq_type}.markdup.bam",
         temp_sort_bam=temppath+"/{assembly}/{sample}_{unit}_{seq_type}.markdup.re_sort.bam",
         temp_dir=temppath+"/{assembly}"
+    priority: 50
     threads: 10
     resources:
         runtime=lambda wildcards, attempt: attempt**2*60*4
