@@ -84,7 +84,7 @@ rule kraken_pe:
     params:
         db=config["kraken"]["index_path"],
         mem=config["kraken"]["mem"]
-    threads: 20
+    threads: 16
     resources:
         runtime=lambda wildcards, attempt: attempt**2*60*10
     conda:
