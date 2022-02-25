@@ -83,7 +83,9 @@ rule kraken_pe:
                results_path=config["paths"]["results"])
     params:
         db=config["kraken"]["index_path"],
-        mem=config["kraken"]["mem"]
+        mem=config["kraken"]["mem"],
+        tmp_out="$TMPDIR/{sample}_{unit}_pe.out",
+        tmp_report="$TMPDIR/{sample}_{unit}_pe.kreport"
     threads: 16
     resources:
         runtime=lambda wildcards, attempt: attempt**2*60*10
@@ -91,9 +93,11 @@ rule kraken_pe:
         "../envs/kraken.yml"
     shell:
         """
-        kraken2 {params.mem} --db {params.db} --output {output[0]} \
-            --report {output[1]} --gzip-compressed \
+        kraken2 {params.mem} --db {params.db} --output {params.tmp_out} \
+            --report {params.tmp_report} --gzip-compressed \
             --threads {threads} --paired {input.R1} {input.R2} > {log} 2>&1
+        mv {params.tmp_out} {output[0]}
+        mv {params.tmp_report} {output[1]}
         """
 
 rule kraken_se:
