@@ -232,9 +232,10 @@ rule extract_fasta:
         "../envs/concoct.yml"
     shell:
         """
+        exec &> {log}
         mkdir -p {params.tmp_dir}
         extract_fasta_bins.py {input[0]} {input[1]} \
-            --output_path {params.tmp_dir} 2> {log}
+            --output_path {params.tmp_dir}
         ls {params.tmp_dir} | egrep "[0-9].fa" | while read f;
         do
             mv {params.tmp_dir}/$f {params.dir}/concoct.$f
