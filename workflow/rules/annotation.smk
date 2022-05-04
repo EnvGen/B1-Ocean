@@ -176,12 +176,12 @@ rule download_pfam_info:
 
 rule press_pfam:
     input:
-        hmmfile="resources/pfam/Pfam-A.hmm"
+        hmmfile="resources/{hmm_db}/Pfam-A.hmm"
     output:
-        expand("resources/pfam/Pfam-A.hmm.h3{suffix}",
+        expand("resources/{{hmm_db}}/Pfam-A.hmm.h3{suffix}",
                suffix=["f", "i", "m", "p"])
     log:
-        "resources/pfam/hmmpress.log"
+        "resources/{hmm_db}/hmmpress.log"
     conda:
         "../envs/annotation.yml"
     shell:
