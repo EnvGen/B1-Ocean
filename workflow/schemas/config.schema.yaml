@@ -243,7 +243,16 @@ properties:
       taxonomy:
         type: boolean
         description: run taxonomic annotation of contigs
-
+  pfam_scan:
+    type: object
+    default:
+      dbs: ["pfam"]
+      threads: 2
+    properties:
+      dbs:
+        type: array
+        description: subfolder names under resources/ to use for pfam_scan, must contain a file 'Pfam-A.hmm'
+        default: ["pfam"]
   taxonomy:
     type: object
     default:
