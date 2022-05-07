@@ -191,35 +191,41 @@ rule press_pfam:
 
 rule pfam_scan:
     input:
-        results+"/annotation/{assembly}/final_contigs.faa",
-        expand("resources/pfam/Pfam-A.hmm.h3{suffix}",
+        faa = results+"/annotation/{assembly}/final_contigs.faa",
+        db = expand("resources/{{hmm_db}}/Pfam-A.hmm.h3{suffix}",
                suffix=["f", "i", "m", "p"])
     output:
-        results+"/annotation/{assembly}/{assembly}.pfam.out"
+        results+"/annotation/{assembly}/{assembly}.{hmm_db}.out"
     log:
-        results+"/annotation/{assembly}/{assembly}.pfam.log"
+        results+"/annotation/{assembly}/{assembly}.{hmm_db}.log"
     conda:
         "../envs/annotation.yml"
     params:
-        dir="resources/pfam",
-        tmp_out=temppath+"/{assembly}.pfam.out"
+        dir = lambda wildcards, input: os.path.dirname(input.db[0]),
+        tmp_out=temppath+"/{assembly}.{hmm_db}.out"
     threads: 2
     resources:
         runtime=lambda wildcards, attempt: attempt**2*60*10
     shell:
         """
-        pfam_scan.pl -fasta {input[0]} -dir {params.dir} -cpu {threads} \
+        pfam_scan.pl -fasta {input.faa} -dir {params.dir} -cpu {threads} \
             -outfile {params.tmp_out} >{log} 2>&1
         mv {params.tmp_out} {output[0]}
         """
 
+def check_clanfiles(wildcards):
+    resource_dir = f"resources/{wildcards.hmm_db}"
+    if os.path.exists(f"{resource_dir}/clan.txt") and os.path.exists(f"{resource_dir}/Pfam-A.clans.tsv"):
+        return [f"{resource_dir}/clan.txt", f"{resource_dir}/Pfam-A.clans.tsv"]
+    else:
+        return []
+
 rule parse_pfam:
     input:
-        results+"/annotation/{assembly}/{assembly}.pfam.out",
-        "resources/pfam/clan.txt",
-        "resources/pfam/Pfam-A.clans.tsv"
+        res = results+"/annotation/{assembly}/{assembly}.{hmm_db}.out",
+        clanfiles = check_clanfiles
     output:
-        results+"/annotation/{assembly}/pfam.parsed.tsv"
+        results+"/annotation/{assembly}/{hmm_db}.parsed.tsv"
     script:
         "../scripts/annotation_utils.py"
 
