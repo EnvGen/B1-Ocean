@@ -131,6 +131,11 @@ annotation:
   # run taxonomic annotation of assembled contigs (using contigtax + sourmash)?
   taxonomy: True
 
+pfam_scan:
+  dbs:
+    - pfam
+    - protein-models
+
 # params for taxonomic annotation of contigs/orfs
 taxonomy:
   # minimum length of contigs to use for taxonomic annotation

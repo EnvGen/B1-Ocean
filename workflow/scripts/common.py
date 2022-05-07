@@ -600,8 +600,8 @@ def annotation_input(config, assemblies):
             if config["annotation"]["splits"] > 1:
                 input += expand("{results}/annotation/{assembly}/{assembly}.pfam.gathered",
                                 results=[results], assembly=[assembly])
-            input += expand("{results}/annotation/{assembly}/pfam.parsed.{norm_method}.tsv",
-                            results=[results], assembly=[assembly],
+            input += expand("{results}/annotation/{assembly}/{hmm_db}.parsed.{norm_method}.tsv",
+                            results=[results], assembly=[assembly], hmm_db = config["pfam_scan"]["dbs"],
                             norm_method=["counts", "TMM", "RLE", "CSS"])
         # Add taxonomic annotation
         if config["annotation"]["taxonomy"]:
