@@ -1,5 +1,6 @@
-# NBIS-Metagenomics
-A workflow for metagenomic projects
+# NBIS-Metagenomics (v2.3.2)
+This is the project repository for the B1-Ocean NBIS short term support project. The code here originated from version 2.3.2 of the 
+[nbis-meta](https://github.com/nbisweden/nbis-meta) workflow.
 
 [![Python 3.7](https://img.shields.io/badge/python-≥3.7-brightgreen.svg)](https://www.python.org/downloads/release/python-37/)
 [![Snakemake 5.18](https://img.shields.io/badge/snakemake->5.18-brightgreen.svg)](https://img.shields.io/badge/snakemake-5.11.2)
