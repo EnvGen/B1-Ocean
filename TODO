@@ -1,0 +1,3 @@
+- split fasta files for R and R8 assemblies and submit jobs for pfam_scan
+- add normalization functions to map_metaT, focus on summing counts to custom db
+- modify workflow to be able to use custom pfam HMM databases with wildcard prefix
