@@ -1,4 +1,4 @@
-# NBIS-Metagenomics (v2.3.2)
+# B1-Ocean project
 This is the project repository for the B1-Ocean NBIS short term support project. The code here originated from version 2.3.2 of the 
 [nbis-meta](https://github.com/nbisweden/nbis-meta) workflow.
 
