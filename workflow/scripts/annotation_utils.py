@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import pandas as pd
+import os
 
 
 def orf2feat(d, val_name="vals", regex=""):
