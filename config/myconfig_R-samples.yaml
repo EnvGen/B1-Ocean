@@ -117,6 +117,7 @@ metaspades:
   extra_settings: "-k 21,31,41,51,61,71,81,91,101,111,121"
 
 annotation:
+  splits: 1000
   # run tRNAscan-SE?
   tRNAscan: False
   # run infernal for rRNA identification?
@@ -278,7 +279,7 @@ kraken:
   # should kraken2 run with reduced memory requirements?
   # setting reduce_memory to True makes kraken2 run in "--memory-mapping" mode
   # which avoids loading database into RAM and uses less memory
-  reduce_memory: True
+  reduce_memory: False
 
 # centrifuge params
 centrifuge:
