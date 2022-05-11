@@ -77,7 +77,7 @@ def parse_pfam(sm):
     annot = annot.groupby(["orf", "pfam"]).first().reset_index()
     cols = ["orf", "pfam", "pfam_name"]
     if clan_files:
-        cols.append("clan", "clan_name")
+        cols += ["clan", "clan_name"]
         annot = pd.merge(annot, info, left_on="pfam", right_on="pfam")
         annot = pd.merge(annot, clans, left_on="clan", right_on="clan", how="left")
         annot.fillna("No_clan", inplace=True)
