@@ -62,7 +62,7 @@ def parse_pfam(sm):
                         names=["orf", "pfam", "pfam_type", "pfam_clan"])
     if os.path.exists(sm.input[1]) and os.path.exists(sm.input[2]):
         clan_files = True
-        clans = pd.read_csv(sm.input[1], header=None, names=["clan", "ctlan_name"],
+        clans = pd.read_csv(sm.input[1], header=None, names=["clan", "clan_name"],
                             usecols=[0, 3], sep="\t")
         info = pd.read_csv(sm.input[2], header=None,
                             names=["pfam", "clan", "pfam_name"], usecols=[0, 1, 4],
