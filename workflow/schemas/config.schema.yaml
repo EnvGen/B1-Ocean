@@ -222,12 +222,17 @@ properties:
   annotation:
     type: object
     default:
+      splits: 0
       tRNAscan: False
       infernal: True
       eggnog: False
       pfam: True
       taxonomy: False
+      hmm_dbs: []
     properties:
+      splits:
+        type: integer
+        description: number of files to split prodigal output into prior to running pfam_scan
       tRNAscan:
         type: boolean
         description: run tRNAscan-SE to identify tRNAs on contigs?
@@ -243,16 +248,20 @@ properties:
       taxonomy:
         type: boolean
         description: run taxonomic annotation of contigs
-  pfam_scan:
+      hmm_dbs:
+        type: array
+        description: subfolder names (under resources) containing HMM databases to use for searching
+        default: []
+  hmmsearch:
     type: object
     default:
-      dbs: ["pfam"]
-      threads: 2
+      extra_settings: "--cut_tc"
+      threads: 10
     properties:
-      dbs:
-        type: array
-        description: subfolder names under resources/ to use for pfam_scan, must contain a file 'Pfam-A.hmm'
-        default: ["pfam"]
+      extra_settings:
+        type: string
+        description: "extra settings to pass to hmmsearch"
+
   taxonomy:
     type: object
     default:
@@ -307,16 +316,15 @@ properties:
       checkm: False
       gtdbtk: False
     properties:
+      all-against-all:
+        type: boolean
+        description: should all samples be mapped against all assemblies to calculate abundance profiles
       contig_lengths:
         type: array
         description: minimum contig lengths to use for binning
         items:
           type: integer
         minimum: 1500
-      all-against-all:
-        type: boolean
-        description: Should all samples be mapped against all assemblies
-        default: True
       metabat:
         type: boolean
         description: run metabat2 binner
@@ -500,6 +508,7 @@ properties:
     default:
       threads: 10
       extra_settings: "--very-sensitive"
+      all-against-all: False
     properties:
       threads:
         type: integer
@@ -508,6 +517,9 @@ properties:
       extra_settings:
         type: string
         description: extra settings to pass to bowtie2
+      all-against-all:
+        type: boolean
+        description: Should all samples be mapped against all assemblies? If False, samples will only be mapped to their respective assemblies.
 
   example_dataset_size:
     type: integer
