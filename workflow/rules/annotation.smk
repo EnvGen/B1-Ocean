@@ -5,9 +5,9 @@ localrules:
     annotate,
     download_rfams,
     press_rfams,
-    download_pfam,
+    make_pfamdb,
     download_pfam_info,
-    press_pfam,
+    press_hmms,
     parse_pfam,
     download_eggnog,
     get_kegg_info,
@@ -137,15 +137,19 @@ rule infernal:
 
 ##### protein families #####
 
-rule download_pfam:
+rule make_pfamdb:
     output:
         hmmfile="resources/pfam/Pfam-A.hmm",
         datfile="resources/pfam/Pfam-A.hmm.dat",
-        versionfile="resources/pfam/Pfam-A.version"
+        versionfile="resources/pfam/Pfam-A.version",
+        dbfiles = expand("resources/pfam/Pfam-A.hmm.h3{suffix}",
+            suffix=["f", "i", "m", "p"])
     log:
-        "resources/pfam/download.log"
+        "resources/pfam/make_pfamdb.log"
     params:
         ftp="ftp://ftp.ebi.ac.uk/pub/databases/Pfam/current_release"
+    conda:
+        "../envs/annotation.yml"
     shell:
         """
         curl -s -L -o {output.hmmfile}.gz {params.ftp}/Pfam-A.hmm.gz
@@ -155,6 +159,8 @@ rule download_pfam:
         gunzip {output.hmmfile}.gz
         gunzip {output.datfile}.gz
         gunzip {output.versionfile}.gz
+        
+        hmmpress {output.hmmfile} > {log} 2>&1
         """
 
 rule download_pfam_info:
@@ -174,11 +180,11 @@ rule download_pfam_info:
         gunzip {output.info}.gz
         """
 
-rule press_pfam:
+rule press_hmms:
     input:
-        hmmfile="resources/{hmm_db}/Pfam-A.hmm"
+        hmmfile="resources/{hmm_db}/{hmm_db}.hmm"
     output:
-        expand("resources/{{hmm_db}}/Pfam-A.hmm.h3{suffix}",
+        expand("resources/{{hmm_db}}/{{hmm_db}}.hmm.h3{suffix}",
                suffix=["f", "i", "m", "p"])
     log:
         "resources/{hmm_db}/hmmpress.log"
@@ -192,17 +198,18 @@ rule press_pfam:
 rule pfam_scan:
     input:
         faa = results+"/annotation/{assembly}/final_contigs.faa",
-        db = expand("resources/{{hmm_db}}/Pfam-A.hmm.h3{suffix}",
-               suffix=["f", "i", "m", "p"])
+        db = expand("resources/pfam/Pfam-A.hmm.h3{suffix}",
+               suffix=["f", "i", "m", "p"]),
+        dat = "resources/pfam/Pfam-A.hmm.dat"
     output:
-        results+"/annotation/{assembly}/{assembly}.{hmm_db}.out"
+        results+"/annotation/{assembly}/{assembly}.pfam.out"
     log:
-        results+"/annotation/{assembly}/{assembly}.{hmm_db}.log"
+        results+"/annotation/{assembly}/{assembly}.pfam.log"
     conda:
         "../envs/annotation.yml"
     params:
         dir = lambda wildcards, input: os.path.dirname(input.db[0]),
-        tmp_out=temppath+"/{assembly}.{hmm_db}.out"
+        tmp_out=temppath+"/{assembly}.pfam.out"
     threads: 2
     resources:
         runtime=lambda wildcards, attempt: attempt**2*60*10
@@ -213,21 +220,48 @@ rule pfam_scan:
         mv {params.tmp_out} {output[0]}
         """
 
-def check_clanfiles(wildcards):
-    resource_dir = f"resources/{wildcards.hmm_db}"
-    if os.path.exists(f"{resource_dir}/clan.txt") and os.path.exists(f"{resource_dir}/Pfam-A.clans.tsv"):
-        return [f"{resource_dir}/clan.txt", f"{resource_dir}/Pfam-A.clans.tsv"]
-    else:
-        return []
+rule hmmsearch:
+    input:
+        faa = results + "/annotation/{assembly}/final_contigs.faa",
+        hmm = "resources/{hmm_db}/{hmm_db}.hmm",
+        db = expand("resources/{{hmm_db}}/{{hmm_db}}.hmm.h3{suffix}",
+            suffix=["f", "i", "m", "p"])
+    output:
+        results+"/annotation/{assembly}/{assembly}.{hmm_db}.out",
+        touch(results+"/annotation/{assembly}/{assembly}.{hmm_db}.hmmsearch")
+    log:
+        results+"/annotation/{assembly}/{assembly}.{hmm_db}.log"
+    conda:
+        "../envs/annotation.yml"
+    params:
+        tmp_out=temppath+"/{assembly}.{hmm_db}.out",
+        extra_params = config["hmmsearch"]["extra_settings"]
+    threads: config["hmmsearch"]["threads"]
+    resources:
+        runtime=lambda wildcards, attempt: attempt**2*60*10
+    shell:
+        """
+        hmmsearch {params.extra_params} -o /dev/null --domtblout {params.tmp_out} --acc --cpu {threads} \
+            {input.hmm} {input.faa} >{log} 2>&1
+        mv {params.tmp_out} {output[0]}
+        """
 
 rule parse_pfam:
     input:
-        res = results+"/annotation/{assembly}/{assembly}.{hmm_db}.out",
-        clanfiles = check_clanfiles
+        res = results+"/annotation/{assembly}/{assembly}.pfam.out",
+        clanfiles = expand("resources/pfam/{f}",
+            f = ["clan.txt", "Pfam-A.clans.tsv"])
     output:
-        results+"/annotation/{assembly}/{hmm_db}.parsed.tsv"
+        results+"/annotation/{assembly}/pfam.parsed.tsv"
     script:
         "../scripts/annotation_utils.py"
+
+rule parse_hmmsearch:
+    input:
+        res = results+"/annotation/{assembly}/{assembly}.{hmm_db}.out",
+        flag = results+"/annotation/{assembly}/{assembly}.{hmm_db}.hmmsearch"
+    output:
+        results+"/annotation/{assembly}/{hmm_db}.parsed.tsv"
 
 ##### eggnog-mapper #####
 
