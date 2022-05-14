@@ -98,6 +98,9 @@ def parse_hmmsearch(sm):
             i+=1
             items = line.rstrip().rsplit()
             orf, name, acc, evalue = (items[0], items[3], items[4], float(items[6]))
+            # For each hmm with '-' as hmm id and only a name, set hmm id to name
+            if acc == "-":
+                acc = name
             d[i] = {'orf': orf, 'hmm': acc, "hmm_name": name, 'evalue': evalue}
         annot = pd.DataFrame(d).T
         annot = annot.groupby(["orf", "hmm"]).first().reset_index()
