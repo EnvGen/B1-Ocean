@@ -103,6 +103,7 @@ def parse_hmmsearch(sm):
         annot = annot.groupby(["orf", "hmm"]).first().reset_index()
         if sm.params.evalue > 0:
             annot = annot.loc[annot.evalue < sm.params.evalue]
+        annot = annot.loc[:, ["orf", "hmm", "hmm_name"]]
         annot.to_csv(sm.output[0], sep="\t", index=False)
 
 
