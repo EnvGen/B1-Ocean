@@ -73,8 +73,8 @@ def parse_pfam(sm):
     annot.loc[:, "pfam"] = [x.split(".")[0] for x in annot.pfam]
     # Select unique orf->pfam mappings
     # TODO: This masks multiple occurrences of domains on the same orf. Figure out if this is wanted or not.
-    # Merge with pfam info and clan info
     annot = annot.groupby(["orf", "pfam"]).first().reset_index()
+    # Merge with pfam info and clan info
     cols = ["orf", "pfam", "pfam_name"]
     if clan_files:
         cols += ["clan", "clan_name"]
@@ -87,8 +87,28 @@ def parse_pfam(sm):
     annot.to_csv(sm.output[0], sep="\t", index=False)
 
 
+def parse_hmmsearch(sm):
+    f = sm.input[0]
+    d = {}
+    with open(f, 'r') as fhin:
+        i = 0
+        for line in fhin:
+            if line.rstrip().startswith("#"):
+                continue
+            i+=1
+            items = line.rstrip().rsplit()
+            orf, name, acc, evalue = (items[0], items[3], items[4], float(items[6]))
+            d[i] = {'orf': orf, 'hmm': acc, "hmm_name": name, 'evalue': evalue}
+        annot = pd.DataFrame(d).T
+        annot = annot.groupby(["orf", "hmm"]).first().reset_index()
+        if sm.params.evalue > 0:
+            annot = annot.loc[annot.evalue < sm.params.evalue]
+        annot.to_csv(sm.output[0], sep="\t", index=False)
+
+
 def main(sm):
     toolbox = {"parse_pfam": parse_pfam,
+               "parse_hmmsearch": parse_hmmsearch,
                "parse_emapper": parse_emapper,
                "parse_rgi": parse_rgi}
     toolbox[sm.rule](sm)

@@ -262,6 +262,10 @@ rule parse_hmmsearch:
         flag = results+"/annotation/{assembly}/{assembly}.{hmm_db}.hmmsearch"
     output:
         results+"/annotation/{assembly}/{hmm_db}.parsed.tsv"
+    params:
+        evalue = config["hmmsearch"]["evalue"]
+    script:
+        "../scripts/annotation_utils.py"
 
 ##### eggnog-mapper #####
 

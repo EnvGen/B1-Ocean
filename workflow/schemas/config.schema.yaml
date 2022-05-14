@@ -255,12 +255,16 @@ properties:
   hmmsearch:
     type: object
     default:
+      evalue: 0
       extra_settings: "--cut_tc"
       threads: 10
     properties:
       extra_settings:
         type: string
         description: "extra settings to pass to hmmsearch"
+      evalue:
+        type: number
+        description: "evalue cutoff for parsing"
 
   taxonomy:
     type: object
