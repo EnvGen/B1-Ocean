@@ -9,6 +9,7 @@ localrules:
     download_pfam_info,
     press_hmms,
     parse_pfam,
+    parse_hmmsearch,
     download_eggnog,
     get_kegg_info,
     parse_emapper,
