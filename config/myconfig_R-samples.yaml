@@ -117,7 +117,8 @@ metaspades:
   extra_settings: "-k 21,31,41,51,61,71,81,91,101,111,121"
 
 annotation:
-  splits: 1000
+  hmm_dbs: ["protein-models"]
+  splits: 0
   # run tRNAscan-SE?
   tRNAscan: False
   # run infernal for rRNA identification?
@@ -131,10 +132,10 @@ annotation:
   # run taxonomic annotation of assembled contigs (using contigtax + sourmash)?
   taxonomy: True
 
-pfam_scan:
-  dbs:
-    - pfam
-    - protein-models
+hmmsearch:
+    threads: 10
+    evalue: 0
+    extra_settings: "--cut_tc"
 
 # params for taxonomic annotation of contigs/orfs
 taxonomy:
