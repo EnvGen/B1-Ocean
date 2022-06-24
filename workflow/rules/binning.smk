@@ -495,7 +495,7 @@ rule download_gtdb:
     params:
         url=config["gtdbtk"]["url"],
         tar=lambda wildcards, output: os.path.dirname(output.met)+"/"+os.path.basename(config["gtdbtk"]["url"]),
-        dir=lambda wildcards, output: os.path.dirname(output.met)
+        dir=lambda wildcards, output: os.path.dirname(os.path.dirname(output.met))
     shell:
         """
         curl -L -o {params.tar} {params.url} > {log} 2>&1
