@@ -550,11 +550,11 @@ rule aggregate_gtdbtk:
         summaries=[]
         for f in input:
             gtdb_dir=os.path.dirname(f)
-            for m in ["bac120/ar122"]:
+            for m in ["bac120/ar53"]:
                 summary=gtdb_dir+"/gtdbtk.{}.summary.tsv".format(m)
                 if os.path.exists(summary):
                     summaries.append(summary)
-        df=concatenate(summaries, index=-3)
+        df=concatenate(summaries, index=-4)
         df.to_csv(output.summary, sep="\t")
 
 ##### annotate bins #####
