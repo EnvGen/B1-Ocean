@@ -550,8 +550,8 @@ rule aggregate_gtdbtk:
         summaries=[]
         for f in input:
             gtdb_dir=os.path.dirname(f)
-            for m in ["bac120/ar53"]:
-                summary=gtdb_dir+"/gtdbtk.{}.summary.tsv".format(m)
+            for m in ["bac120","ar53"]:
+                summary=gtdb_dir+f"/classify/gtdbtk.{m}.summary.tsv"
                 if os.path.exists(summary):
                     summaries.append(summary)
         df=concatenate(summaries, index=-4)
