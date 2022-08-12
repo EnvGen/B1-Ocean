@@ -4,7 +4,6 @@ from argparse import ArgumentParser
 from Bio.SeqIO import parse
 import sys
 from subprocess import run
-import math
 
 
 def count_seqs(f):
@@ -25,7 +24,7 @@ def write_files(f, seqs_per_file, n_files, n_seqs, prefix="split", outdir="."):
     fhout = open(f"{outdir}/{prefix}_{i}-of-{n_files}.faa", 'w')
     sys.stderr.write(f"Writing to files under {outdir}:\n")
     with open(f, 'r') as fhin:
-        for j, record in enumerate(parse(f, "fasta"), start=1):
+        for j, record in enumerate(parse(fhin, "fasta"), start=1):
             fhout.write(f">{record.description}\n{record.seq}\n")
             if j == n_seqs:
                 break
@@ -41,7 +40,7 @@ def main(args):
         n_seqs = count_seqs(args.infile)
     else:
         n_seqs = args.n_seqs
-    seqs_per_file = math.ceil(n_seqs/args.n_files)
+    seqs_per_file = round(n_seqs/args.n_files)
     sys.stderr.write(f"Files: {args.n_files}\n")
     sys.stderr.write(f"Sequences: {n_seqs}\n")
     sys.stderr.write(f"Sequences_per_file: {seqs_per_file}\n")
