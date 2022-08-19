@@ -7,7 +7,8 @@ localrules:
     count_features,
     edger_normalize_features,
     css_normalize_features,
-    sum_to_taxa
+    sum_to_taxa,
+    marker_gene_norm
 
 ##### quantify master rule #####
 
