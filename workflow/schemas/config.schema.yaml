@@ -252,6 +252,26 @@ properties:
         type: array
         description: subfolder names (under resources) containing HMM databases to use for searching
         default: []
+      norm_models:
+        type: object
+        default:
+          kos: ["K06942", "K01889", "K01887", "K01875", "K01883", "K01869", "K01873", "K01409", "K03106", "K03110"]
+        properties:
+          kos:
+            type: array
+            description: list of kegg orthologs used as marker genes for normalization
+            default:
+              - K06942 # ychF; ribosome-binding ATPase
+              - K01889 # FARSA, pheS; phenylalanyl-tRNA synthetase alpha chain [EC:6.1.1.20]
+              - K01887 # RARS, argS; arginyl-tRNA synthetase [EC:6.1.1.19]
+              - K01875 # SARS, serS; seryl-tRNA synthetase [EC:6.1.1.11]
+              - K01883 # CARS, cysS; cysteinyl-tRNA synthetase [EC:6.1.1.16]
+              - K01869 # LARS, leuS; leucyl-tRNA synthetase [EC:6.1.1.4]
+              - K01873 # VARS, valS; valyl-tRNA synthetase [EC:6.1.1.9]
+              - K01409 # OSGEP, KAE1, QRI7; N6-L-threonylcarbamoyladenine synthase [EC:2.3.1.234]
+              - K03106 # SRP54, ffh; signal recognition particle subunit SRP54 [EC:3.6.5.4]
+              - K03110 # ftsY; fused signal recognition particle receptor
+
   hmmsearch:
     type: object
     default:

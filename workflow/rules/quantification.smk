@@ -190,3 +190,16 @@ rule sum_to_taxa:
         results+"/annotation/{assembly}/taxonomy/tax.{counts_type}.tsv"
     script:
         "../scripts/quantification_utils.py"
+
+rule marker_gene_norm:
+    """
+    Normalize rpkm values with the median abundance of a set of marker genes
+    """
+    input:
+        results+"/annotation/{assembly}/{db}.parsed.rpkm.tsv"
+    output:
+        results+"/annotation/{assembly}/{db}.parsed.markergene_norm.tsv"
+    params:
+        norm_models=lambda wildcards: config["annotation"]["norm_models"][wildcards.db]
+    script:
+        "../scripts/quantification_utils.py"

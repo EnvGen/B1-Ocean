@@ -133,12 +133,25 @@ def sum_to_taxa(sm):
     taxa_abund_sum.to_csv(sm.output[0], sep="\t", index=False)
 
 
+def marker_gene_norm(sm):
+    df = pd.read_csv(sm.input[0], sep="\t", index_col=0)
+    info_df = df.loc[:, df.dtypes==object]
+    norm_models = sm.params.norm_models
+    norm_df = df.loc[df.index.intersection(norm_models)]
+    df_sum = df.groupby(level=0).sum()
+    norm_median = norm_df.groupby(level=0).sum().median()
+    df_norm = df_sum.div(norm_median)
+    df_norm = pd.merge(info_df, df_norm, left_index=True, right_index=True)
+    df_norm.to_csv(sm.output.mtx, sep="\t")
+
+
 def main(sm):
     toolbox = {"write_featurefile": write_featurefile,
                "clean_featurecount": clean_featurecount,
                "aggregate_featurecount": aggregate_featurecount,
                "count_features": count_features,
-               "sum_to_taxa": sum_to_taxa}
+               "sum_to_taxa": sum_to_taxa,
+               "marker_gene_norm": marker_gene_norm}
 
     toolbox[sm.rule](sm)
 

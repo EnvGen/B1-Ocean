@@ -617,6 +617,10 @@ def annotation_input(config, assemblies):
             input += expand("{results}/annotation/{assembly}/rgi.parsed.{norm_method}.tsv",
                             results=[results], assembly=[assembly],
                             norm_method=["counts", "rpkm", "TMM", "RLE", "CSS"])
+        # Add marker gene normalized output for each annotation type that has marker genes described in config
+        for db in config["annotation"]["norm_models"].keys():
+            input += expand("{results}/annotation/{assembly}/{db}.parsed.markergene_norm.tsv",
+                            results=[results], assembly=[assembly], db=[db])
     return input
 
 

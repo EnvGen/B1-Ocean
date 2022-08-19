@@ -131,6 +131,42 @@ annotation:
   rgi: False
   # run taxonomic annotation of assembled contigs (using contigtax + sourmash)?
   taxonomy: False
+  norm_models:
+    kos:
+      - K06942 # ychF; ribosome-binding ATPase
+      - K01889 # FARSA, pheS; phenylalanyl-tRNA synthetase alpha chain [EC:6.1.1.20]
+      - K01887 # RARS, argS; arginyl-tRNA synthetase [EC:6.1.1.19]
+      - K01875 # SARS, serS; seryl-tRNA synthetase [EC:6.1.1.11]
+      - K01883 # CARS, cysS; cysteinyl-tRNA synthetase [EC:6.1.1.16]
+      - K01869 # LARS, leuS; leucyl-tRNA synthetase [EC:6.1.1.4]
+      - K01873 # VARS, valS; valyl-tRNA synthetase [EC:6.1.1.9]
+      - K01409 # OSGEP, KAE1, QRI7; N6-L-threonylcarbamoyladenine synthase [EC:2.3.1.234]
+      - K03106 # SRP54, ffh; signal recognition particle subunit SRP54 [EC:3.6.5.4]
+      - K03110 # ftsY; fused signal recognition particle receptor
+    pfam-hmmsearch:
+      - PF00133.21 # tRNA synthetases class I (I, L, M and V)
+      - PF00448.21 # SRP54-type protein, GTPase domain
+      - PF00587.24 # tRNA synthetase class II core domain (G, H, P, S and T)
+      - PF00750.18 # tRNA synthetases class I (R)
+      - PF00814.24 # tRNA N6-adenosine threonylcarbamoyltransferase
+      - PF01406.18 # tRNA synthetases class I (C) catalytic domain
+      - PF01409.19 # tRNA synthetases class II core domain (F)
+      - PF01926.22 # 50S ribosome-binding GTPase
+      - PF02403.21 # Seryl-tRNA synthetase N-terminal domain
+      - PF02881.18 # SRP54-type protein, helical bundle domain
+      - PF02912.17 # Aminoacyl tRNA synthetase class II, N-terminal domain
+      - PF03483.16 # B3/B4 tRNA-binding domain
+      - PF03484.14 # tRNA synthetase B5 domain
+      - PF03485.15 # Arginyl tRNA synthetase N terminal domain
+      - PF05746.14 # DALR anticodon binding domain
+      - PF06071.12 # YchF-GTPase C terminal protein domain
+      - PF08264.12 # Aminoacyl tRNA synthetase
+      - PF09190.10 # Aminoacyl tRNA synthetase
+      - PF09334.10 # tRNA synthetases class I (M)
+      - PF10458.8 # Valyl tRNA synthetase tRNA binding arm
+      - PF13603.5 # Leucyl-tRNA synthetase, Domain 2
+      - PF17759 # Phenylalanyl tRNA synthetase beta chain CLM domain
+      - PF18490 # tRNA-binding domain
 
 hmmsearch:
   extra_settings: "--cut_tc"
