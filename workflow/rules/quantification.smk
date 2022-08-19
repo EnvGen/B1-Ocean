@@ -201,6 +201,7 @@ rule marker_gene_norm:
     output:
         results+"/annotation/{assembly}/{db}.parsed.markergene_norm.tsv"
     params:
-        norm_models=lambda wildcards: config["annotation"]["norm_models"][wildcards.db]
+        norm_models=lambda wildcards: config["annotation"]["norm_models"][wildcards.db],
+        index_col = lambda wildcards: 1 if wildcards.db == "kos" else 0
     script:
         "../scripts/quantification_utils.py"

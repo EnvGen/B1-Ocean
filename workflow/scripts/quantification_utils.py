@@ -134,8 +134,8 @@ def sum_to_taxa(sm):
 
 
 def marker_gene_norm(sm):
-    df = pd.read_csv(sm.input[0], sep="\t", index_col=0)
-    info_df = df.loc[:, df.dtypes==object]
+    df = pd.read_csv(sm.input[0], sep="\t", index_col=sm.params.index_col)
+    info_df = df.loc[:, df.dtypes == object]
     norm_models = sm.params.norm_models
     norm_df = df.loc[df.index.intersection(norm_models)]
     df_sum = df.groupby(level=0).sum()
