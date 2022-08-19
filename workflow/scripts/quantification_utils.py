@@ -142,7 +142,7 @@ def marker_gene_norm(sm):
     norm_median = norm_df.groupby(level=0).sum().median()
     df_norm = df_sum.div(norm_median)
     df_norm = pd.merge(info_df, df_norm, left_index=True, right_index=True)
-    df_norm.to_csv(sm.output.mtx, sep="\t")
+    df_norm.to_csv(sm.output[0], sep="\t")
 
 
 def main(sm):
