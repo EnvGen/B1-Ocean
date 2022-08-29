@@ -64,6 +64,34 @@ rule kraken_build_standard:
         kraken2-build --clean {params.dir} > {log.clean} 2>&1
         """
 
+rule kraken_contigs:
+    input:
+        fa=expand("{results_path}/assembly/{{assembly}}/final_contigs.fa",
+            results_path = config["paths"]["results"]),
+        db=expand("{kraken_index_path}/{n}.k2d",
+            kraken_index_path=config["kraken"]["index_path"], n=["hash","opts","taxo"])
+    output:
+        expand("{results_path}/annotation/{{assembly}}/taxonomy/final_contigs.kraken.out",
+            results_path=config["paths"]["results"]),
+        expand("{results_path}/annotation/{{assembly}}/taxonomy/final_contigs.kraken.kreport",
+           results_path=config["paths"]["results"])
+    log:
+        expand("{results_path}/annotation/{{assembly}}/taxonomy/final_contigs.kraken.log",
+            results_path=config["paths"]["results"])
+    params:
+        db=config["kraken"]["index_path"],
+        mem=config["kraken"]["mem"]
+    threads: 10
+    resources:
+        runtime= lambda wildcards,attempt: attempt ** 2 * 60 * 10
+    conda:
+        "../envs/kraken.yml"
+    shell:
+        """
+        kraken2 {params.mem} --db {params.db} --output {output[0]} \
+            --report {output[1]} --threads {threads} {input.fa} > {log} 2>&1
+        """
+
 rule kraken_pe:
     input:
         R1=expand("{results_path}/intermediate/preprocess/{{sample}}_{{unit}}_R1{preprocess}.fastq.gz",
