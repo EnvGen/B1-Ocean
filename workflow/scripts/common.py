@@ -609,9 +609,14 @@ def annotation_input(config, assemblies):
             norm_method=["counts", "rpkm", "TMM", "RLE", "CSS"])
         # Add taxonomic annotation
         if config["annotation"]["taxonomy"]:
-            input += expand("{results}/annotation/{assembly}/taxonomy/tax.{counts_type}.tsv",
+            tax_annotations = []
+            if config["annotation"]["taxonomy"]["kraken_contigs"]:
+                tax_annotations.append("kraken")
+            if config["annotation"]["taxonomy"]["contigtax"]:
+                tax_annotations.append("contigtax")
+            input += expand("{results}/annotation/{assembly}/taxonomy/{tax_annotation}.{counts_type}.tsv",
                             results=[results], assembly=[assembly],
-                            counts_type=["counts", "rpkm"])
+                            counts_type=["counts", "rpkm"], tax_annotation = tax_annotations)
         # Add Resistance Gene Identifier output
         if config["annotation"]["rgi"]:
             input += expand("{results}/annotation/{assembly}/rgi.parsed.{norm_method}.tsv",
