@@ -92,6 +92,25 @@ rule kraken_contigs:
             --report {output[1]} --threads {threads} {input.fa} > {log} 2>&1
         """
 
+rule parse_kraken_contigs:
+    input:
+        results+"/annotation/{assembly}/taxonomy/final_contigs.kraken.out",
+        "resources/taxonomy/taxonomy.sqlite"
+    output:
+        results+"/annotation/{assembly}/taxonomy/final_contigs.kraken.tsv"
+    log:
+        results+"/annotation/{assembly}/taxonomy/parse_kraken_contigs.log"
+    conda:
+        "../envs/taxonomy.yml"
+    params:
+        ranks = " ".join(config["taxonomy"]["ranks"]),
+        script = "../scripts/parse_kraken_contigs.py",
+        taxdir = lambda wildcards, input: os.path.dirname(input[1])
+    shell:
+        """
+        python {params.script} {input[0]} {output[0]} {params.taxdir} --ranks {params.ranks} > {log} 2>&1
+        """
+
 rule kraken_pe:
     input:
         R1=expand("{results_path}/intermediate/preprocess/{{sample}}_{{unit}}_R1{preprocess}.fastq.gz",
