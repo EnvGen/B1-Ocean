@@ -24,7 +24,7 @@ def add_lower(df, ranks):
     return df
 
 
-def contigtax_mash(sm):
+def merge_sourmash(sm):
     # Keep stats on assignments
     # resolved = cases where sourmash helped resolve assignments
     # transferred = cases where blast-based assignments were overwritten
@@ -33,7 +33,7 @@ def contigtax_mash(sm):
     stats = {'resolved': 0, 'transferred': 0, 'added': 0, 'total': 0}
     df1 = pd.read_csv(sm.input.smash, sep=",", header=0, index_col=0)
     stats['total'] = df1.shape[0]
-    df2 = pd.read_csv(sm.input.contigtax[0], sep="\t", header=0, index_col=0)
+    df2 = pd.read_csv(sm.input.tax[0], sep="\t", header=0, index_col=0)
     ranks = list(df2.columns)
     ranks.reverse()
     # Only use subset of contigs with matches
@@ -81,7 +81,7 @@ def contigtax_mash(sm):
         fhout.write("Added:       {}\n".format(stats['added']))
 
 
-def contigtax_assign_orfs(sm):
+def assign_orfs(sm):
     """
     Transfers taxonomic assignments from contigs down to ORFs called on contigs
     :param sm: snakemake object
@@ -110,7 +110,7 @@ def contigtax_assign_orfs(sm):
 
 
 def main(sm):
-    toolbox = {"merge_contigtax_sourmash": contigtax_mash,
+    toolbox = {"merge_sourmash": merge_sourmash,
                "contigtax_assign_orfs": contigtax_assign_orfs}
     toolbox[sm.rule](sm)
 
