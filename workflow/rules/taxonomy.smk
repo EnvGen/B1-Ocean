@@ -177,8 +177,7 @@ rule contigtax_assign:
                     db=config["taxonomy"]["database"]),
         sql=ancient("resources/taxonomy/taxonomy.sqlite")
     output:
-        expand(results+"/annotation/{{assembly}}/taxonomy/contigtax.{db}.taxonomy.tsv",
-            db=config["taxonomy"]["database"])
+        results+"/annotation/{assembly}/taxonomy/contigtax.taxonomy.tsv"
     log:
         results+"/annotation/{assembly}/taxonomy/contigtax_assign.log"
     params:
@@ -255,24 +254,22 @@ rule sourmash_classify:
 
 ##### common taxonomy rules #####
 
-rule merge_contigtax_sourmash:
+rule merge_sourmash:
     input:
         smash=results+"/annotation/{assembly}/taxonomy/sourmash.taxonomy.csv",
-        contigtax=expand(results+"/annotation/{{assembly}}/taxonomy/contigtax.{db}.taxonomy.tsv",
-                        db=config["taxonomy"]["database"])
+        tax=results+"/annotation/{{assembly}}/taxonomy/{tool}.taxonomy.tsv"
     output:
-        results+"/annotation/{assembly}/taxonomy/final_contigs.taxonomy.tsv"
+        results+"/annotation/{assembly}/taxonomy/final_contigs.{tool}.tsv"
     log:
-        results+"/annotation/{assembly}/taxonomy/merge.log"
+        results+"/annotation/{assembly}/taxonomy/sourmash_merge_{tool}.log"
     script:
         "../scripts/taxonomy_utils.py"
 
-rule contigtax_assign_orfs:
+rule assign_orfs:
     input:
-        tax=results+"/annotation/{assembly}/taxonomy/final_contigs.taxonomy.tsv",
+        tax=results+"/annotation/{assembly}/taxonomy/final_contigs.{tool}.tsv",
         gff=results+"/annotation/{assembly}/final_contigs.gff"
     output:
-        tax=expand(results+"/annotation/{{assembly}}/taxonomy/orfs.{db}.taxonomy.tsv",
-                    db=config["taxonomy"]["database"])
+        tax=results+"/annotation/{assembly}/taxonomy/orfs.{tool}.tsv"
     script:
         "../scripts/taxonomy_utils.py"
