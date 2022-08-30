@@ -83,7 +83,7 @@ rule kraken_contigs:
         mem=config["kraken"]["mem"]
     threads: 10
     resources:
-        runtime= lambda wildcards,attempt: attempt ** 2 * 60 * 10
+        runtime= lambda wildcards, attempt: attempt**2 * 60 * 4
     conda:
         "../envs/kraken.yml"
     shell:
