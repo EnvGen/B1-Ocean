@@ -610,9 +610,9 @@ def annotation_input(config, assemblies):
         # Add taxonomic annotation
         if config["annotation"]["taxonomy"]:
             tax_annotations = []
-            if config["annotation"]["taxonomy"]["kraken_contigs"]:
+            if config["taxonomy"]["kraken_contigs"]:
                 tax_annotations.append("kraken")
-            if config["annotation"]["taxonomy"]["contigtax"]:
+            if config["taxonomy"]["contigtax"]:
                 tax_annotations.append("contigtax")
             input += expand("{results}/annotation/{assembly}/taxonomy/{tax_annotation}.{counts_type}.tsv",
                             results=[results], assembly=[assembly],
