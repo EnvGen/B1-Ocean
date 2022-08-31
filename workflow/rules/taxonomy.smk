@@ -257,7 +257,7 @@ rule sourmash_classify:
 rule merge_sourmash:
     input:
         smash=results+"/annotation/{assembly}/taxonomy/sourmash.taxonomy.csv",
-        tax=results+"/annotation/{{assembly}}/taxonomy/{tool}.taxonomy.tsv"
+        tax=results+"/annotation/{assembly}/taxonomy/{tool}.taxonomy.tsv"
     output:
         results+"/annotation/{assembly}/taxonomy/final_contigs.{tool}.tsv"
     log:
