@@ -97,7 +97,7 @@ rule parse_kraken_contigs:
         results+"/annotation/{assembly}/taxonomy/final_contigs.kraken.out",
         "resources/taxonomy/taxonomy.sqlite"
     output:
-        results+"/annotation/{assembly}/taxonomy/final_contigs.kraken.tsv"
+        results+"/annotation/{assembly}/taxonomy/kraken.taxonomy.tsv"
     log:
         results+"/annotation/{assembly}/taxonomy/parse_kraken_contigs.log"
     conda:
