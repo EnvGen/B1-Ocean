@@ -289,6 +289,8 @@ properties:
   taxonomy:
     type: object
     default:
+      kraken_contigs: True
+      contigtax: False
       min_len: 300
       search_params: "--evalue 0.01 --top 10"
       assign_params: "--evalue 0.001 --top 5"
@@ -303,6 +305,12 @@ properties:
         - "species"
       database: "uniref100"
     properties:
+      kraken_contigs:
+        type: boolean
+        description: use kraken2 to classify contigs?
+      contigtax:
+        type: boolean
+        description: use contigtax to classify contigs?
       min_len:
         type: integer
         description: minimum length of contigs to assign taxonomy to
@@ -478,6 +486,7 @@ properties:
       prebuilt_url: "https://genome-idx.s3.amazonaws.com/kraken/k2_standard_8gb_20200919.tar.gz"
       custom: ""
       reduce_memory: False
+      confidence: 0.5
     properties:
       standard_db:
         type: boolean
@@ -494,6 +503,9 @@ properties:
       reduce_memory:
         type: boolean
         description: run kraken2 with reduced memory requirements?
+      confidence:
+        type: number
+        description: confidence for kraken2 classifier
 
   centrifuge:
     type: object

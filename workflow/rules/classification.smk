@@ -80,7 +80,8 @@ rule kraken_contigs:
             results_path=config["paths"]["results"])
     params:
         db=config["kraken"]["index_path"],
-        mem=config["kraken"]["mem"]
+        mem=config["kraken"]["mem"],
+        confidence=config["kraken"]["confidence"]
     threads: 10
     resources:
         runtime= lambda wildcards,attempt: attempt ** 2 * 60 * 10
@@ -88,7 +89,7 @@ rule kraken_contigs:
         "../envs/kraken.yml"
     shell:
         """
-        kraken2 {params.mem} --db {params.db} --output {output[0]} \
+        kraken2 {params.mem} --confidence {params.confidence} --db {params.db} --output {output[0]} \
             --report {output[1]} --threads {threads} {input.fa} > {log} 2>&1
         """
 
