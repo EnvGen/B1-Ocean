@@ -175,6 +175,10 @@ hmmsearch:
 
 # params for taxonomic annotation of contigs/orfs
 taxonomy:
+  # Run kraken2 on assembled contigs?
+  kraken_contigs: True
+  # Run contigtax on contigs?
+  contigtax: False
   # minimum length of contigs to use for taxonomic annotation
   min_len: 300
   # parameters for contigtax search
@@ -320,6 +324,8 @@ kraken:
   # setting reduce_memory to True makes kraken2 run in "--memory-mapping" mode
   # which avoids loading database into RAM and uses less memory
   reduce_memory: False
+  # Kraken confidence threshold
+  confidence: 0.5
 
 # centrifuge params
 centrifuge:
