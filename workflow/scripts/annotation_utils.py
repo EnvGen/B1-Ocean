@@ -145,7 +145,7 @@ def get_non_overlapping(annot):
             if len(set(stretch).intersection(residues)) > 0:
                 overlap = True
         if not overlap:
-            d[i] = {'orf': orf, 'hmm': r["hmm"], 'hmm_name': r["hmm_name"], 'score': r["score"],
+            d[i] = {'orf': orf, 'hmm': r["hmm"], 'hmm_name': r["hmm_name"], 'evalue': r["evalue"], 'score': r["score"],
                     'start': r["start"], 'stop': r["stop"]}
             orf_hits[orf]["residues"] = sorted(orf_hits[orf]["residues"]+stretch)
             i += 1
@@ -157,8 +157,8 @@ def parse_hmmsearch(sm):
     f = sm.input[0]
     annot = read_hmmout(f, evalue_threshold=sm.params.evalue)
     filtered = get_non_overlapping(annot)
-    df = filtered.loc[:, ["orf", "hmm", "hmm_name"]]
-    df.to_csv(sm.output[0], sep="\t", index=False)
+    df = filtered.loc[:, ["hmm", "hmm_name"]]
+    df.to_csv(sm.output[0], sep="\t", index=True)
 
 
 def main(sm):
