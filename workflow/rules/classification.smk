@@ -57,7 +57,7 @@ rule kraken_build_standard:
     conda:
         "../envs/kraken.yml"
     resources:
-        runtime=lambda wildcards, attempt: attempt**2*60*24
+        runtime=lambda wildcards, attempt: attempt**2 * 60 * 24
     shell:
         """
         kraken2-build --standard --db {params.dir} --threads {threads} > {log.build} 2>&1
@@ -82,7 +82,7 @@ rule kraken_contigs:
         db=config["kraken"]["index_path"],
         mem=config["kraken"]["mem"],
         confidence=config["kraken"]["confidence"]
-    threads: 10
+    threads: 20
     resources:
         runtime= lambda wildcards,attempt: attempt ** 2 * 60 * 10
     conda:
