@@ -161,8 +161,17 @@ def parse_hmmsearch(sm):
     df.to_csv(sm.output[0], sep="\t", index=True)
 
 
+def parse_cmsearch(sm):
+    f = sm.input[0]
+    annot = pd.read_csv(f, comment="#", header=None, sep=" +",
+                        usecols=[0, 2, 3, 7, 8, 9, 14, 15], engine="python", index_col=0,
+                        names=["contig", "target", "acc", "start", "stop", "strand", "score", "evalue"])
+    annot.to_csv(sm.output[0], sep="\t", index=True)
+
+
 def main(sm):
     toolbox = {"parse_pfam": parse_pfam,
+               "parse_cmsearch": parse_cmsearch,
                "parse_hmmsearch": parse_hmmsearch,
                "parse_emapper": parse_emapper,
                "parse_rgi": parse_rgi}

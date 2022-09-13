@@ -136,6 +136,35 @@ rule infernal:
             {input.fastafile} > /dev/null 2>{log}
         """
 
+##### cmscan on custom database
+rule cmsearch:
+    input:
+        fa=results+"/assembly/{assembly}/final_contigs.fa",
+        cm=expand("resources/{{cmdb}}/{{cmdb}}.cm.i1{suff}", suff = ["f","i","m","p"])
+    output:
+        cm=results+"/annotation/{assembly}/{assembly}.{cmdb}.tblout"
+    log:
+        results+"/annotation/{assembly}/{assembly}.{cmdb}.log"
+    conda:
+        "../envs/annotation.yml"
+    resources:
+        runtime = lambda wildcards: 60 * 24 * 10
+    params:
+        cm="resources/{cmdb}/{cmdb}.cm"
+    threads: 4
+    shell:
+        """
+        cmsearch --cpu {threads} --tblout {output.cm} {params.cm} {input.fa} >/dev/null 2>{log}
+        """
+
+rule parse_cmsearch:
+    input:
+        rules.cmsearch.output.cm
+    output:
+        results+"/annotation/{assembly}/{assembly}.{cmdb}.parsed.tsv"
+    script:
+        "../scripts/annotation_utils.py"
+
 ##### protein families #####
 
 rule make_pfamdb:
