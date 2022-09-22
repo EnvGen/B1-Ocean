@@ -275,17 +275,30 @@ properties:
   hmmsearch:
     type: object
     default:
-      evalue: 0
-      extra_settings: "--cut_tc"
+      evalue: 0.001
+      extra_settings: ""
       threads: 10
     properties:
       extra_settings:
         type: string
         description: "extra settings to pass to hmmsearch"
+        default: ""
       evalue:
         type: number
         description: "evalue cutoff for parsing"
-
+        default: 0.001
+      scores:
+        type: object
+        default:
+          PF05690.13: 48
+          PF02581.16: 40
+          TIGR00693: 40
+          PF02110.14: 50
+          TIGR00694: 50
+          thiY_custom: 100
+          thiV_custom: 100
+          TIGR01254: 65
+          TIGR01276: 65
   taxonomy:
     type: object
     default:
