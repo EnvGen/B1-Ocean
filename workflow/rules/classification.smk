@@ -105,7 +105,7 @@ rule parse_kraken_contigs:
         "../envs/taxonomy.yml"
     params:
         ranks = " ".join(config["taxonomy"]["ranks"]),
-        script = "../scripts/parse_kraken_contigs.py",
+        script = "workflow/scripts/parse_kraken_contigs.py",
         taxdir = lambda wildcards, input: os.path.dirname(input[1])
     shell:
         """

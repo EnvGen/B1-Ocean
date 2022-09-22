@@ -9,6 +9,7 @@ localrules:
     download_pfam_info,
     press_hmms,
     parse_pfam,
+    parse_cmsearch,
     parse_hmmsearch,
     download_eggnog,
     get_kegg_info,
@@ -148,10 +149,10 @@ rule cmsearch:
     conda:
         "../envs/annotation.yml"
     resources:
-        runtime = lambda wildcards: 60 * 24 * 10
+        runtime = lambda wildcards: 60 * 24
     params:
         cm="resources/{cmdb}/{cmdb}.cm"
-    threads: 4
+    threads: 10
     shell:
         """
         cmsearch --cpu {threads} --tblout {output.cm} {params.cm} {input.fa} >/dev/null 2>{log}

@@ -24,6 +24,12 @@ def add_lower(df, ranks):
     return df
 
 
+def strip_prefix(df):
+    for col in df.columns:
+        df.loc[:, col] = [x.lstrip("[dpcofgs]__") for x in df[col]]
+    return df
+
+
 def merge_sourmash(sm):
     # Keep stats on assignments
     # resolved = cases where sourmash helped resolve assignments
@@ -32,12 +38,14 @@ def merge_sourmash(sm):
     # total = total number of contigs
     stats = {'resolved': 0, 'transferred': 0, 'added': 0, 'total': 0}
     df1 = pd.read_csv(sm.input.smash, sep=",", header=0, index_col=0)
+    df1.rename(index = lambda x: x.split(" ")[0], inplace=True)
     stats['total'] = df1.shape[0]
-    df2 = pd.read_csv(sm.input.tax[0], sep="\t", header=0, index_col=0)
+    df2 = pd.read_csv(sm.input.tax, sep="\t", header=0, index_col=0)
     ranks = list(df2.columns)
     ranks.reverse()
     # Only use subset of contigs with matches
     df1 = df1.loc[df1["status"] == "found", df2.columns]
+    df1 = strip_prefix(df1)
     df1.fillna("Unclassified", inplace=True)
 
     # Get common set of contigs
@@ -111,7 +119,7 @@ def assign_orfs(sm):
 
 def main(sm):
     toolbox = {"merge_sourmash": merge_sourmash,
-               "contigtax_assign_orfs": contigtax_assign_orfs}
+               "assign_orfs": assign_orfs}
     toolbox[sm.rule](sm)
 
 
