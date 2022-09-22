@@ -95,7 +95,7 @@ rule kraken_contigs:
 
 rule krakenuniq_contigs:
     input:
-        fa=results+"/assembly/{{assembly}}/final_contigs.fa",
+        fa=results+"/assembly/{assembly}/final_contigs.fa",
         db=config["krakenuniq"]["db_path"]
     output:
         out=results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.out",
@@ -115,6 +115,7 @@ rule krakenuniq_contigs:
         """
         krakenuniq --db {params.db} --report-file {output.report} \
             --output {params.out} --threads {threads} --preload-size {params.preload_size}
+        mv {params.db} {output.out}
         """
 
 rule parse_kraken_contigs:
