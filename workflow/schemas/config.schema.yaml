@@ -486,7 +486,7 @@ properties:
       prebuilt_url: "https://genome-idx.s3.amazonaws.com/kraken/k2_standard_8gb_20200919.tar.gz"
       custom: ""
       reduce_memory: False
-      confidence: 0.5
+      confidence: 0
     properties:
       standard_db:
         type: boolean
