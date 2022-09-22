@@ -93,12 +93,36 @@ rule kraken_contigs:
             --report {output[1]} --threads {threads} {input.fa} > {log} 2>&1
         """
 
+rule krakenuniq_contigs:
+    input:
+        fa=results+"/assembly/{{assembly}}/final_contigs.fa",
+        db=config["krakenuniq"]["db_path"]
+    output:
+        out=results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.out",
+        report=results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.kreport"
+    log:
+        results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.log"
+    params:
+        db = lambda wildcards, input: os.path.dirname(input.db),
+        preload_size = f"{config['krakenuniq']['threads']*6}G",
+        out = "$TMPDIR/{assembly}.krakenuniq.out"
+    conda:
+        "../envs/krakenuniq.yml"
+    threads: config["krakenuniq"]["threads"]
+    resources:
+        runtime = 60 * 24 * 10
+    shell:
+        """
+        krakenuniq --db {params.db} --report-file {output.report} \
+            --output {params.out} --threads {threads} --preload-size {params.preload_size}
+        """
+
 rule parse_kraken_contigs:
     input:
-        results+"/annotation/{assembly}/taxonomy/final_contigs.kraken.out",
+        results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.out",
         "resources/taxonomy/taxonomy.sqlite"
     output:
-        results+"/annotation/{assembly}/taxonomy/kraken.taxonomy.tsv"
+        results+"/annotation/{assembly}/taxonomy/krakenuniq.taxonomy.tsv"
     log:
         results+"/annotation/{assembly}/taxonomy/parse_kraken_contigs.log"
     conda:
