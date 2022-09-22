@@ -490,7 +490,11 @@ properties:
       metaphlan:
         type: boolean
         description: run metaphlan profiler?
-
+  krakenuniq:
+    type: object
+    default:
+      db_path: "resources/krakenuniq/standard/database.kdb"
+      threads: 10
   kraken:
     type: object
     default:
