@@ -136,7 +136,16 @@ hmmsearch:
   threads: 10
   evalue: 0.0000000001
   extra_settings: "-Z 45638612"
-
+  scores:
+    PF05690.13: 48
+    PF02581.16: 40
+    TIGR00693: 40
+    PF02110.14: 50
+    TIGR00694: 50
+    thiY_custom: 100
+    thiV_custom: 100
+    TIGR01254: 65
+    TIGR01276: 65
 # params for taxonomic annotation of contigs/orfs
 taxonomy:
   # Run kraken2 on assembled contigs?

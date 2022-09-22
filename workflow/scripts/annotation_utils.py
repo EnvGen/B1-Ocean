@@ -87,7 +87,7 @@ def parse_pfam(sm):
     annot.to_csv(sm.output[0], sep="\t", index=False)
 
 
-def read_hmmout(f, evalue_threshold=0.001):
+def read_hmmout(f, evalue_threshold=1e-3, scores={}):
     orf_hits = {}
     d = {}
     with open(f, 'r') as fhin:
@@ -97,6 +97,10 @@ def read_hmmout(f, evalue_threshold=0.001):
                 continue
             items = line.rstrip().rsplit()
             orf, name, acc, evalue, score, start, stop = (items[0], items[3], items[4], float(items[6]), float(items[7]),  int(items[15]), int(items[16]))
+            # Try filtering by score
+            if name in scores.keys():
+                if score <= scores[name]:
+                    continue
             # Filter by evalue
             if evalue > evalue_threshold:
                 continue
@@ -155,7 +159,7 @@ def get_non_overlapping(annot):
 
 def parse_hmmsearch(sm):
     f = sm.input[0]
-    annot = read_hmmout(f, evalue_threshold=sm.params.evalue)
+    annot = read_hmmout(f, evalue_threshold=sm.params.evalue, scores = sm.params.scores)
     filtered = get_non_overlapping(annot)
     df = filtered.loc[:, ["hmm", "hmm_name"]]
     df.to_csv(sm.output[0], sep="\t", index=True)

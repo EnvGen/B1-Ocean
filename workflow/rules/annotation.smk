@@ -294,7 +294,8 @@ rule parse_hmmsearch:
     output:
         results+"/annotation/{assembly}/{hmm_db}.parsed.tsv"
     params:
-        evalue = config["hmmsearch"]["evalue"]
+        evalue = config["hmmsearch"]["evalue"],
+        scores = config["hmmsearch"]["scores"]
     script:
         "../scripts/annotation_utils.py"
 
