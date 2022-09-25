@@ -110,7 +110,7 @@ rule krakenuniq_contigs:
         "../envs/krakenuniq.yml"
     threads: config["krakenuniq"]["threads"]
     resources:
-        runtime = 60 * 24 * 10
+        runtime = 60 * 220
     shell:
         """
         krakenuniq --db {params.db} --report-file {output.report} \
