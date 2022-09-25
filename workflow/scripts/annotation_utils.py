@@ -97,16 +97,16 @@ def read_hmmout(f, evalue_threshold=1e-3, scores={}):
                 continue
             items = line.rstrip().rsplit()
             orf, name, acc, evalue, score, start, stop = (items[0], items[3], items[4], float(items[6]), float(items[7]),  int(items[15]), int(items[16]))
+            # For each hmm with '-' as hmm id and only a name, set hmm id to name
+            if acc == "-":
+                acc = name
             # Try filtering by score
-            if name in scores.keys():
-                if score <= scores[name]:
+            if acc in scores.keys():
+                if score <= scores[acc]:
                     continue
             # Filter by evalue
             if evalue > evalue_threshold:
                 continue
-            # For each hmm with '-' as hmm id and only a name, set hmm id to name
-            if acc == "-":
-                acc = name
             if not orf in orf_hits.keys():
                 orf_hits[orf] = []
             if acc in orf_hits[orf]:
