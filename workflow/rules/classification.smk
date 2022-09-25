@@ -104,7 +104,7 @@ rule krakenuniq_contigs:
         results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.log"
     params:
         db = lambda wildcards, input: os.path.dirname(input.db),
-        preload_size = f"{config['krakenuniq']['threads']*6}G",
+        preload_size = f"{config['krakenuniq']['threads']*5}G",
         out = "$TMPDIR/{assembly}.krakenuniq.out"
     conda:
         "../envs/krakenuniq.yml"
