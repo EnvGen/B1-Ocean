@@ -114,7 +114,7 @@ rule krakenuniq_contigs:
     shell:
         """
         krakenuniq --db {params.db} --report-file {output.report} \
-            --output {params.out} --threads {threads} --preload-size {params.preload_size} > {log} 2>&1
+            --output {params.out} --threads {threads} --preload-size {params.preload_size} {input.fa} > {log} 2>&1
         mv {params.out} {output.out}
         """
 
