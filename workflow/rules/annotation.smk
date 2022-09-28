@@ -141,7 +141,7 @@ rule infernal:
 rule cmsearch:
     input:
         fa=results+"/assembly/{assembly}/final_contigs.fa",
-        cm=expand("resources/{{cmdb}}/{{cmdb}}.cm.i1{suff}", suff = ["f","i","m","p"])
+        cm=expand("resources/{cmdb}/{cmdb}.cm.i1{suff}", cmdb = config["annotation"]["cmdb"], suff = ["f","i","m","p"])
     output:
         cm=results+"/annotation/{assembly}/{assembly}.{cmdb}.tblout"
     log:

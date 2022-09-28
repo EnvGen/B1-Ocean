@@ -595,6 +595,11 @@ def annotation_input(config, assemblies):
                             results=[results], assembly=[assembly],
                             db=["enzymes", "pathways", "kos", "modules"],
                             norm_method=["counts", "rpkm", "TMM", "RLE", "CSS"])
+        # Add cmsearch annotation
+        if config["annotation"]["cmdb"] != "":
+            results + "/annotation/{assembly}/{assembly}.{cmdb}.parsed.tsv"
+            input += expand("{results}/annotation/{assembly}/{assembly}.{cmdb}.parsed.tsv",
+                            results=[results], assembly=[assembly], cmdb=config["annotation"]["cmdb"])
         # Add PFAM annotation
         if config["annotation"]["pfam"]:
             if config["annotation"]["splits"] > 1:

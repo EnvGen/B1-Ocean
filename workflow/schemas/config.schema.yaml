@@ -229,6 +229,7 @@ properties:
       pfam: True
       taxonomy: False
       hmm_dbs: []
+      cmdb: ""
     properties:
       splits:
         type: integer
@@ -252,6 +253,10 @@ properties:
         type: array
         description: subfolder names (under resources) containing HMM databases to use for searching
         default: []
+      cmdb:
+        type: string
+        description: base name of cmsearch database
+        default: ""
       norm_models:
         type: object
         default:
