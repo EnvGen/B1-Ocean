@@ -131,6 +131,10 @@ annotation:
   rgi: False
   # run taxonomic annotation of assembled contigs (using contigtax + sourmash)?
   taxonomy: False
+  # name of cmsearch database
+  # if this is set, there must be files with the pattern 'resources/<cmdb>/<cmdb>.cm.<suff>'
+  # for example if cmdb: thi-box then there must exist 'resources/thi-box/thi-box.cm.i1f' etc.
+  cmdb: ""
   norm_models:
     kos:
       - K06942 # ychF; ribosome-binding ATPase
