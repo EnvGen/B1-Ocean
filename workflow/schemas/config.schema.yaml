@@ -223,6 +223,7 @@ properties:
     type: object
     default:
       splits: 0
+      assembly_splits: 0
       tRNAscan: False
       infernal: True
       eggnog: False
@@ -234,6 +235,9 @@ properties:
       splits:
         type: integer
         description: number of files to split prodigal output into prior to running pfam_scan
+      assembly_splits:
+        type: integer
+        description: number of files to split the assembly fasta into prior to running contigtaxx
       tRNAscan:
         type: boolean
         description: run tRNAscan-SE to identify tRNAs on contigs?

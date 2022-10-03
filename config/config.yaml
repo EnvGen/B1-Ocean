@@ -119,6 +119,7 @@ metaspades:
 annotation:
   hmm_dbs: []
   splits: 0
+  assembly_splits: 0
   # run tRNAscan-SE?
   tRNAscan: False
   # run infernal for rRNA identification?
