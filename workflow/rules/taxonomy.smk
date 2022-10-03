@@ -7,9 +7,9 @@ localrules:
     contigtax_format_uniref,
     contigtax_update,
     download_sourmash_db,
-    contigtax_assign_orfs,
     sourmash_compute,
-    merge_contigtax_sourmash
+    merge_sourmash,
+    assign_orfs
 
 ##### taxonomy master rule #####
 rule taxonomy:
