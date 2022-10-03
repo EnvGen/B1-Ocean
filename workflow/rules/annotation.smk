@@ -15,7 +15,8 @@ localrules:
     get_kegg_info,
     parse_emapper,
     download_rgi_data,
-    parse_rgi
+    parse_rgi,
+    parse_hmmsearch
 
 ##### annotation master rule #####
 
