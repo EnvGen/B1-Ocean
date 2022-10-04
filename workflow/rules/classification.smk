@@ -120,12 +120,12 @@ rule krakenuniq_contigs:
 
 rule parse_kraken_contigs:
     input:
-        results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.out",
+        results+"/annotation/{assembly}/taxonomy/final_contigs.{krakentool}.out",
         "resources/taxonomy/taxonomy.sqlite"
     output:
-        results+"/annotation/{assembly}/taxonomy/krakenuniq.taxonomy.tsv"
+        results+"/annotation/{assembly}/taxonomy/{krakentool}.taxonomy.tsv"
     log:
-        results+"/annotation/{assembly}/taxonomy/parse_kraken_contigs.log"
+        results+"/annotation/{assembly}/taxonomy/parse_{krakentool}_contigs.log"
     conda:
         "../envs/taxonomy.yml"
     params:
