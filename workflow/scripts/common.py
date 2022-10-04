@@ -614,16 +614,17 @@ def annotation_input(config, assemblies):
             norm_method=["counts", "rpkm", "TMM", "RLE", "CSS"])
         # Add taxonomic annotation
         if config["annotation"]["taxonomy"]:
-            tax_annotations = []
+            tax_tools = []
+            if config["taxonomy"]["krakenuniq_contigs"]:
+                tax_tools.append("krakenuniq")
             if config["taxonomy"]["kraken_contigs"]:
-                tax_annotations.append("kraken")
+                tax_tools.append("kraken")
             if config["taxonomy"]["contigtax"]:
                 if config["annotation"]["assembly_splits"] > 0:
-                    input.append(f"results/annotation/{assembly}/taxonomy/{assembly}.contigtax.{config['taxonomy']['database']}.gathered")
-                tax_annotations.append("contigtax")
-            input += expand("{results}/annotation/{assembly}/taxonomy/{tax_annotation}.{counts_type}.tsv",
-                            results=[results], assembly=[assembly],
-                            counts_type=["counts", "rpkm"], tax_annotation = tax_annotations)
+                    input.append(f"results/annotation/{assembly}/taxonomy/{assembly}.contigtax.gathered")
+                tax_tools.append("contigtax")
+            input+= expand("{results}/annotation/{assembly}/taxonomy/tax.{tool}.{counts_type}.tsv", results=[results],
+                           assembly=[assembly], counts_type=["counts", "rpkm"], tax_annotation=tax_tools)
         # Add Resistance Gene Identifier output
         if config["annotation"]["rgi"]:
             input += expand("{results}/annotation/{assembly}/rgi.parsed.{norm_method}.tsv",
