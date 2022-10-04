@@ -11,11 +11,19 @@ localrules:
     merge_sourmash,
     assign_orfs
 
+tax_tools = []
+if config["taxonomy"]["kraken_contigs"]:
+    tax_tools.append("kraken")
+if config["taxonomy"]["contigtax"]:
+    tax_tools.append("contigtax")
+if config["taxonomy"]["krakenuniq_contigs"]:
+    tax_tools.append("krakenuniq")
+
 ##### taxonomy master rule #####
 rule taxonomy:
     input:
-        expand(results+"/annotation/{assembly}/taxonomy/orfs.{db}.taxonomy.tsv",
-               assembly=assemblies.keys(), db=config["taxonomy"]["database"])
+        expand(results+"/annotation/{assembly}/taxonomy/orfs.{tool}.tsv",
+               assembly=assemblies.keys(), tool = tax_tools)
 
 ##### contigtax #####
 
