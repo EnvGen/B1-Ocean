@@ -624,7 +624,7 @@ def annotation_input(config, assemblies):
                     input.append(f"results/annotation/{assembly}/taxonomy/{assembly}.contigtax.gathered")
                 tax_tools.append("contigtax")
             input+= expand("{results}/annotation/{assembly}/taxonomy/tax.{tool}.{counts_type}.tsv", results=[results],
-                           assembly=[assembly], counts_type=["counts", "rpkm"], tax_annotation=tax_tools)
+                           assembly=[assembly], counts_type=["counts", "rpkm"], tool=tax_tools)
         # Add Resistance Gene Identifier output
         if config["annotation"]["rgi"]:
             input += expand("{results}/annotation/{assembly}/rgi.parsed.{norm_method}.tsv",
