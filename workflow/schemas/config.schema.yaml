@@ -311,8 +311,9 @@ properties:
   taxonomy:
     type: object
     default:
-      kraken_contigs: True
-      contigtax: False
+      kraken_contigs: False
+      krakenuniq_contigs: False
+      contigtax: True
       min_len: 300
       search_params: "--evalue 0.01 --top 10"
       assign_params: "--evalue 0.001 --top 5"
@@ -330,6 +331,9 @@ properties:
       kraken_contigs:
         type: boolean
         description: use kraken2 to classify contigs?
+      krakenuniq_contigs:
+        type: boolean
+        description: use krakenuniq to classify contigs?
       contigtax:
         type: boolean
         description: use contigtax to classify contigs?

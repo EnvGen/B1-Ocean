@@ -180,10 +180,12 @@ hmmsearch:
 
 # params for taxonomic annotation of contigs/orfs
 taxonomy:
+  # Run krakenuniq on assembled contigs?
+  krakenuniq_contigs: False
   # Run kraken2 on assembled contigs?
-  kraken_contigs: True
+  kraken_contigs: False
   # Run contigtax on contigs?
-  contigtax: False
+  contigtax: True
   # minimum length of contigs to use for taxonomic annotation
   min_len: 300
   # parameters for contigtax search
