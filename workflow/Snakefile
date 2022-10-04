@@ -8,9 +8,12 @@ include: "rules/other.smk"
 include: "rules/annotation.smk"
 # if config says to run analysis on split protein file,
 # this makes the necessary adjustments
-if int(config["annotation"]["splits"]) + int(config["annotation"]["assembly_splits"])> 1:
+if int(config["annotation"]["splits"])>0:
     include: "rules/annotation_split.smk"
     ruleorder: pfam_scan_gather > pfam_scan
+if int(config["annotation"]["assembly_splits"])>0:
+    include: "rules/taxonomy_split.smk"
+    ruleorder: contigtax_gather > contigtax_assign
 include: "rules/assembly.smk"
 include: "rules/binning.smk"
 include: "rules/classification.smk"
