@@ -618,7 +618,7 @@ def annotation_input(config, assemblies):
             if config["taxonomy"]["kraken_contigs"]:
                 tax_annotations.append("kraken")
             if config["taxonomy"]["contigtax"]:
-                if config["annotation"]["splits"] > 0:
+                if config["annotation"]["assembly_splits"] > 0:
                     input.append(f"results/annotation/{assembly}/taxonomy/{assembly}.contigtax.{config['taxonomy']['database']}.gathered")
                 tax_annotations.append("contigtax")
             input += expand("{results}/annotation/{assembly}/taxonomy/{tax_annotation}.{counts_type}.tsv",

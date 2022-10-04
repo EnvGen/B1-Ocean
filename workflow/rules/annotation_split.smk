@@ -1,5 +1,6 @@
 scattergather:
-    split = config["annotation"]["splits"]
+    split = config["annotation"]["splits"],
+    assemsplit = config["annotation"]["assembly_splits"]
 
 localrules:
     split_fasta,
@@ -35,7 +36,7 @@ rule split_assembly:
 
 rule contigtax_search_split:
     input:
-        fasta="results/assembly/{assembly}/splits/split_{scatteritem}.faa",
+        fasta="results/assembly/{assembly}/splits/split_{scatteritem}.fa",
         db=expand("resources/{db}/diamond.dmnd",db=config["taxonomy"]["database"])
     output:
         "results/annotation/{assembly}/taxonomy/splits/split_{scatteritem}.final_contigs.{db}.tsv.gz"
@@ -83,7 +84,7 @@ rule contigtax_assign_split:
 
 rule contigtax_gather:
     input:
-        gather.split("results/annotation/{{assembly}}/taxonomy/splits/split_{scatteritem}.contigtax.taxonomy.{{db}}.tsv")
+        gather.assemsplit("results/annotation/{{assembly}}/taxonomy/splits/split_{scatteritem}.contigtax.taxonomy.{{db}}.tsv")
     output:
         touch("results/annotation/{assembly}/taxonomy/{assembly}.contigtax.{db}.gathered")
     shell:
