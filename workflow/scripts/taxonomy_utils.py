@@ -114,7 +114,7 @@ def assign_orfs(sm):
     # Set index to ORF ids
     orf_tax_df.set_index("id", inplace=True)
     orf_tax_df.drop("contig", axis=1, inplace=True)
-    orf_tax_df.to_csv(sm.output.tax[0], sep="\t", index=True, header=True)
+    orf_tax_df.to_csv(sm.output.tax, sep="\t", index=True, header=True)
 
 
 def main(sm):
