@@ -45,8 +45,8 @@ def merge_sourmash(sm):
     ranks.reverse()
     # Only use subset of contigs with matches
     df1 = df1.loc[df1["status"] == "found", df2.columns]
-    df1 = strip_prefix(df1)
     df1.fillna("Unclassified", inplace=True)
+    df1 = strip_prefix(df1)
 
     # Get common set of contigs
     common = set(df1.index).intersection(set(df2.index))
