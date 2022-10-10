@@ -41,6 +41,7 @@ wildcard_constraints:
     l="\d+",
     counts_type="(counts|rpkm)",
     norm_method="(TMM|RLE)",
+    krakentool="kraken|krakenuniq",
     tool="contigtax|kraken|krakenuniq"
 
 from scripts.common import check_uppmax, check_annotation, check_assembly, check_classifiers
