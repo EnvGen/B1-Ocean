@@ -19,9 +19,9 @@ def count_seqs(f):
     return int(p.stdout.decode().rstrip())
 
 
-def write_files(f, seqs_per_file, n_files, n_seqs, prefix="split", outdir="."):
+def write_files(f, seqs_per_file, n_files, n_seqs, suffix="faa", prefix="split", outdir="."):
     i = 1
-    fhout = open(f"{outdir}/{prefix}_{i}-of-{n_files}.faa", 'w')
+    fhout = open(f"{outdir}/{prefix}_{i}-of-{n_files}.{suffix}", 'w')
     sys.stderr.write(f"Writing to files under {outdir}:\n")
     with open(f, 'r') as fhin:
         for j, record in enumerate(parse(fhin, "fasta"), start=1):
@@ -31,7 +31,7 @@ def write_files(f, seqs_per_file, n_files, n_seqs, prefix="split", outdir="."):
             if j % seqs_per_file == 0 and i <= n_files: # Make sure remaining seqs are put into the final file
                 i+=1
                 fhout.close()
-                fhout = open(f"{outdir}/{prefix}_{i}-of-{n_files}.faa", 'w')
+                fhout = open(f"{outdir}/{prefix}_{i}-of-{n_files}.{suffix}", 'w')
     fhout.close()
 
 
@@ -44,7 +44,7 @@ def main(args):
     sys.stderr.write(f"Files: {args.n_files}\n")
     sys.stderr.write(f"Sequences: {n_seqs}\n")
     sys.stderr.write(f"Sequences_per_file: {seqs_per_file}\n")
-    write_files(args.infile, seqs_per_file, args.n_files, n_seqs, prefix=args.prefix, outdir=args.outdir)
+    write_files(args.infile, seqs_per_file, args.n_files, n_seqs, suffix=args.suffix, prefix=args.prefix, outdir=args.outdir)
 
 
 if __name__ == "__main__":
@@ -59,5 +59,7 @@ if __name__ == "__main__":
                         help="Output directory for split files")
     parser.add_argument("--prefix", type=str, default="split",
                         help="Prefix for split files")
+    parser.add_argument("--suffix", type=str, default="faa",
+                        help="Suffix for split files, defaults to '.faa'")
     args = parser.parse_args()
     main(args)
