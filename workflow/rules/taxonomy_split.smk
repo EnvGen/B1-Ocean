@@ -17,7 +17,7 @@ rule split_assembly:
         outdir = lambda wildcards, output: os.path.dirname(output[0])
     log: "results/assembly/{assembly}/splits/splits.log"
     shell:
-        "python workflow/scripts/split_fasta_file.py {input} -n {params.n_files} -o {params.outdir} > {log} 2>&1"
+        "python workflow/scripts/split_fasta_file.py {input} -n {params.n_files} -o {params.outdir} --suffix fa > {log} 2>&1"
 
 rule contigtax_search_split:
     input:
@@ -73,8 +73,11 @@ rule contigtax_gather:
     output:
         results+"/annotation/{assembly}/taxonomy/contigtax.taxonomy.tsv",
         touch("results/annotation/{assembly}/taxonomy/{assembly}.contigtax.gathered")
+    log:
+        results+"/annotation/{assembly}/taxonomy/contigtax_gather.log"
     shell:
         """
-        egrep "^#" {input[0]} > {output[0]}
-        cat {input} | egrep -v "^#" >> {output[0]}
+        exec &>{log}
+        head -1 {input[0]} > {output[0]}
+        cat {input} | egrep -v "^query" >> {output[0]}
         """
