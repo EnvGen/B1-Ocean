@@ -118,7 +118,8 @@ metaspades:
 
 annotation:
   hmm_dbs: ["protein-models", "pfam-hmmsearch"]
-  splits: 0
+  cmdb: "thi-box"
+  splits: 1000
   # run tRNAscan-SE?
   tRNAscan: False
   # run infernal for rRNA identification?
@@ -126,7 +127,7 @@ annotation:
   # run eggnog-mapper to infer KEGG orthologs, pathways and modules?
   eggnog: True
   # run PFAM-scan to infer protein families from PFAM?
-  pfam: True
+  pfam: False
   # run Resistance gene identifier?
   rgi: False
   # run taxonomic annotation of assembled contigs (using contigtax + sourmash)?
@@ -134,7 +135,7 @@ annotation:
 
 hmmsearch:
   threads: 10
-  evalue: 0.0000000001
+  evalue: 0.001
   extra_settings: "-Z 45638612"
   scores:
     PF05690.13: 48
@@ -149,9 +150,9 @@ hmmsearch:
 # params for taxonomic annotation of contigs/orfs
 taxonomy:
   # Run kraken2 on assembled contigs?
-  kraken_contigs: True
+  kraken_contigs: False
   # Run contigtax on contigs?
-  contigtax: False
+  contigtax: True
   # minimum length of contigs to use for taxonomic annotation
   min_len: 300
   # parameters for contigtax search
@@ -275,6 +276,9 @@ classification:
   # run metaphlan profiler?
   metaphlan: False
 
+krakenuniq:
+  threads: 20
+  db_path: "resources/krakenuniq/standard/database.kdb"
 # parameters for kraken
 kraken:
   # below are some options for creating the kraken database
