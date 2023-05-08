@@ -118,7 +118,8 @@ metaspades:
 
 annotation:
   hmm_dbs: ["protein-models", "pfam-hmmsearch"]
-  splits: 0
+  cmdb: "thi-box"
+  splits: 1000
   # run tRNAscan-SE?
   tRNAscan: False
   # run infernal for rRNA identification?
@@ -126,7 +127,7 @@ annotation:
   # run eggnog-mapper to infer KEGG orthologs, pathways and modules?
   eggnog: True
   # run PFAM-scan to infer protein families from PFAM?
-  pfam: True
+  pfam: False
   # run Resistance gene identifier?
   rgi: False
   # run taxonomic annotation of assembled contigs (using contigtax + sourmash)?
@@ -136,9 +137,22 @@ hmmsearch:
   threads: 10
   evalue: 0.001
   extra_settings: "-Z 45638612"
-
+  scores:
+    PF05690.13: 48
+    PF02581.16: 40
+    TIGR00693: 40
+    PF02110.14: 50
+    TIGR00694: 50
+    thiY_custom: 100
+    thiV_custom: 100
+    TIGR01254: 65
+    TIGR01276: 65
 # params for taxonomic annotation of contigs/orfs
 taxonomy:
+  # Run kraken2 on assembled contigs?
+  kraken_contigs: False
+  # Run contigtax on contigs?
+  contigtax: True
   # minimum length of contigs to use for taxonomic annotation
   min_len: 300
   # parameters for contigtax search
@@ -179,12 +193,12 @@ binning:
   contig_lengths:
     - 1500
     # uncomment and/or add below to run binning at more lengths
-    - 2500
+    #- 2500
     #- 5000
   # run Metabat2 binner?
   metabat: True
   # run CONCOCT binner?
-  concoct: True
+  concoct: False
   # run MaxBin2 binner?
   maxbin: False
   # maximum threads for binners
@@ -195,6 +209,7 @@ binning:
   gtdbtk: True
   # calculate average nucleotide identity for binned genomes with fastANI?
   fastani: True
+  all-against-all: True
 
 # parameters for MaxBin2
 maxbin:
@@ -226,7 +241,7 @@ fastani:
   # L_bac ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/209/385/GCF_000209385.2_Lach_bact_2_1_46_FAA_V2
   # E_bac ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/302/695/GCF_000302695.1_LSJC7_1.0
   # B_mal ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/002/346/085/GCF_002346085.1_ASM234608v1
-  ref_list: ""
+  ref_list: "resources/fastANI/reference_sequences_DK.tsv"
   # fraction overlap of alignments between two genomes to evaluate them for
   # clustering
   fraction: 0.5
@@ -261,13 +276,16 @@ classification:
   # run metaphlan profiler?
   metaphlan: False
 
+krakenuniq:
+  threads: 20
+  db_path: "resources/krakenuniq/standard/database.kdb"
 # parameters for kraken
 kraken:
   # below are some options for creating the kraken database
   # the default is to use the prebuilt and lightweight "minikraken" database but
   # if you instead want to build the standard database you may do so, just keep
   # in mind that it will use a lot of resources during the build step
-
+  confidence: 0
   # generate the standard kraken database?
   standard_db: False
   # download a prebuilt kraken2 database from the CCB servers
@@ -276,7 +294,7 @@ kraken:
   # if you already have access to a built kraken database you may specify the
   # database path here (path must contain hash.k2d, opts.k2d and taxo.k2d files
   prebuilt_url: "https://genome-idx.s3.amazonaws.com/kraken/k2_standard_8gb_20200919.tar.gz"
-  custom: "resources/kraken/nt"
+  custom: "resources/kraken/maxikraken2_1903_140GB"
   # should kraken2 run with reduced memory requirements?
   # setting reduce_memory to True makes kraken2 run in "--memory-mapping" mode
   # which avoids loading database into RAM and uses less memory

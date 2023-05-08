@@ -223,16 +223,21 @@ properties:
     type: object
     default:
       splits: 0
+      assembly_splits: 0
       tRNAscan: False
       infernal: True
       eggnog: False
       pfam: True
       taxonomy: False
       hmm_dbs: []
+      cmdb: ""
     properties:
       splits:
         type: integer
         description: number of files to split prodigal output into prior to running pfam_scan
+      assembly_splits:
+        type: integer
+        description: number of files to split the assembly fasta into prior to running contigtaxx
       tRNAscan:
         type: boolean
         description: run tRNAscan-SE to identify tRNAs on contigs?
@@ -252,6 +257,10 @@ properties:
         type: array
         description: subfolder names (under resources) containing HMM databases to use for searching
         default: []
+      cmdb:
+        type: string
+        description: base name of cmsearch database
+        default: ""
       norm_models:
         type: object
         default:
@@ -275,20 +284,36 @@ properties:
   hmmsearch:
     type: object
     default:
-      evalue: 0
-      extra_settings: "--cut_tc"
+      evalue: 0.001
+      extra_settings: ""
       threads: 10
     properties:
       extra_settings:
         type: string
         description: "extra settings to pass to hmmsearch"
+        default: ""
       evalue:
         type: number
         description: "evalue cutoff for parsing"
-
+        default: 0.001
+      scores:
+        type: object
+        default:
+          PF05690.13: 48
+          PF02581.16: 40
+          TIGR00693: 40
+          PF02110.14: 50
+          TIGR00694: 50
+          thiY_custom: 100
+          thiV_custom: 100
+          TIGR01254: 65
+          TIGR01276: 65
   taxonomy:
     type: object
     default:
+      kraken_contigs: False
+      krakenuniq_contigs: False
+      contigtax: True
       min_len: 300
       search_params: "--evalue 0.01 --top 10"
       assign_params: "--evalue 0.001 --top 5"
@@ -303,6 +328,15 @@ properties:
         - "species"
       database: "uniref100"
     properties:
+      kraken_contigs:
+        type: boolean
+        description: use kraken2 to classify contigs?
+      krakenuniq_contigs:
+        type: boolean
+        description: use krakenuniq to classify contigs?
+      contigtax:
+        type: boolean
+        description: use contigtax to classify contigs?
       min_len:
         type: integer
         description: minimum length of contigs to assign taxonomy to
@@ -469,7 +503,11 @@ properties:
       metaphlan:
         type: boolean
         description: run metaphlan profiler?
-
+  krakenuniq:
+    type: object
+    default:
+      db_path: "resources/krakenuniq/standard/database.kdb"
+      threads: 10
   kraken:
     type: object
     default:
@@ -478,6 +516,7 @@ properties:
       prebuilt_url: "https://genome-idx.s3.amazonaws.com/kraken/k2_standard_8gb_20200919.tar.gz"
       custom: ""
       reduce_memory: False
+      confidence: 0
     properties:
       standard_db:
         type: boolean
@@ -494,6 +533,9 @@ properties:
       reduce_memory:
         type: boolean
         description: run kraken2 with reduced memory requirements?
+      confidence:
+        type: number
+        description: confidence for kraken2 classifier
 
   centrifuge:
     type: object

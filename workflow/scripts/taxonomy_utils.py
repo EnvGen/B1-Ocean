@@ -24,7 +24,13 @@ def add_lower(df, ranks):
     return df
 
 
-def contigtax_mash(sm):
+def strip_prefix(df):
+    for col in df.columns:
+        df.loc[:, col] = [x.lstrip("[dpcofgs]__") for x in df[col]]
+    return df
+
+
+def merge_sourmash(sm):
     # Keep stats on assignments
     # resolved = cases where sourmash helped resolve assignments
     # transferred = cases where blast-based assignments were overwritten
@@ -32,13 +38,15 @@ def contigtax_mash(sm):
     # total = total number of contigs
     stats = {'resolved': 0, 'transferred': 0, 'added': 0, 'total': 0}
     df1 = pd.read_csv(sm.input.smash, sep=",", header=0, index_col=0)
+    df1.rename(index = lambda x: x.split(" ")[0], inplace=True)
     stats['total'] = df1.shape[0]
-    df2 = pd.read_csv(sm.input.contigtax[0], sep="\t", header=0, index_col=0)
+    df2 = pd.read_csv(sm.input.tax, sep="\t", header=0, index_col=0)
     ranks = list(df2.columns)
     ranks.reverse()
     # Only use subset of contigs with matches
     df1 = df1.loc[df1["status"] == "found", df2.columns]
     df1.fillna("Unclassified", inplace=True)
+    df1 = strip_prefix(df1)
 
     # Get common set of contigs
     common = set(df1.index).intersection(set(df2.index))
@@ -81,7 +89,7 @@ def contigtax_mash(sm):
         fhout.write("Added:       {}\n".format(stats['added']))
 
 
-def contigtax_assign_orfs(sm):
+def assign_orfs(sm):
     """
     Transfers taxonomic assignments from contigs down to ORFs called on contigs
     :param sm: snakemake object
@@ -106,12 +114,12 @@ def contigtax_assign_orfs(sm):
     # Set index to ORF ids
     orf_tax_df.set_index("id", inplace=True)
     orf_tax_df.drop("contig", axis=1, inplace=True)
-    orf_tax_df.to_csv(sm.output.tax[0], sep="\t", index=True, header=True)
+    orf_tax_df.to_csv(sm.output.tax, sep="\t", index=True, header=True)
 
 
 def main(sm):
-    toolbox = {"merge_contigtax_sourmash": contigtax_mash,
-               "contigtax_assign_orfs": contigtax_assign_orfs}
+    toolbox = {"merge_sourmash": merge_sourmash,
+               "assign_orfs": assign_orfs}
     toolbox[sm.rule](sm)
 
 

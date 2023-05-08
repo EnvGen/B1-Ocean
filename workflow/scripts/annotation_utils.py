@@ -87,31 +87,95 @@ def parse_pfam(sm):
     annot.to_csv(sm.output[0], sep="\t", index=False)
 
 
-def parse_hmmsearch(sm):
-    f = sm.input[0]
+def read_hmmout(f, evalue_threshold=1e-3, scores={}):
+    orf_hits = {}
     d = {}
     with open(f, 'r') as fhin:
         i = 0
         for line in fhin:
             if line.rstrip().startswith("#"):
                 continue
-            i+=1
             items = line.rstrip().rsplit()
-            orf, name, acc, evalue = (items[0], items[3], items[4], float(items[6]))
+            orf, name, acc, evalue, score, start, stop = (items[0], items[3], items[4], float(items[6]), float(items[7]),  int(items[15]), int(items[16]))
             # For each hmm with '-' as hmm id and only a name, set hmm id to name
             if acc == "-":
                 acc = name
-            d[i] = {'orf': orf, 'hmm': acc, "hmm_name": name, 'evalue': evalue}
+            # Try filtering by score
+            if acc in scores.keys():
+                if score <= scores[acc]:
+                    continue
+            # Filter by evalue
+            if evalue > evalue_threshold:
+                continue
+            if not orf in orf_hits.keys():
+                orf_hits[orf] = []
+            if acc in orf_hits[orf]:
+                continue
+            orf_hits[orf].append(acc)
+            d[i] = {'orf': orf, 'hmm': acc, "hmm_name": name, 'evalue': evalue,
+                    'score': score, 'start': start, 'stop': stop}
+            i+=1
         annot = pd.DataFrame(d).T
-        annot = annot.groupby(["orf", "hmm"]).first().reset_index()
-        if sm.params.evalue > 0:
-            annot = annot.loc[annot.evalue < sm.params.evalue]
-        annot = annot.loc[:, ["orf", "hmm", "hmm_name"]]
-        annot.to_csv(sm.output[0], sep="\t", index=False)
+        annot.set_index("orf", inplace=True)
+    return annot
+
+
+def get_non_overlapping(annot):
+    """
+    Iterates a dataframe with start, stop coordinates and only
+    selects highest scoring hits that do not overlap
+    """
+    d = {}
+    orf_hits = {}
+    i = 0
+    # Sort the dataframe by score from highest to lowest
+    for row in annot.sort_values("score", ascending=False).iterrows():
+        orf = row[0]
+        # orf_hits is a dictionary storing all positions occupied by
+        # a hit of some kind
+        try:
+            orf_hits[orf]
+        except KeyError:
+            orf_hits[orf] = {'residues': []}
+        r = row[1]
+        # Generate a list of all residues occupied by this hit
+        stretch = list(range(r["start"], r["stop"]+1))
+        # Check overlap
+        overlap = False
+        if len(orf_hits[orf].keys()) > 0:
+            residues = orf_hits[orf]["residues"]
+            # Check intersection between current stretch and stored
+            # occupied residues. If intersection is > 0 there's an overlap
+            if len(set(stretch).intersection(residues)) > 0:
+                overlap = True
+        if not overlap:
+            d[i] = {'orf': orf, 'hmm': r["hmm"], 'hmm_name': r["hmm_name"], 'evalue': r["evalue"], 'score': r["score"],
+                    'start': r["start"], 'stop': r["stop"]}
+            orf_hits[orf]["residues"] = sorted(orf_hits[orf]["residues"]+stretch)
+            i += 1
+    filtered = pd.DataFrame(d).T
+    return filtered.set_index("orf")
+
+
+def parse_hmmsearch(sm):
+    f = sm.input[0]
+    annot = read_hmmout(f, evalue_threshold=sm.params.evalue, scores = sm.params.scores)
+    filtered = get_non_overlapping(annot)
+    df = filtered.loc[:, ["hmm", "hmm_name"]]
+    df.to_csv(sm.output[0], sep="\t", index=True)
+
+
+def parse_cmsearch(sm):
+    f = sm.input[0]
+    annot = pd.read_csv(f, comment="#", header=None, sep=" +",
+                        usecols=[0, 2, 3, 7, 8, 9, 14, 15], engine="python", index_col=0,
+                        names=["contig", "target", "acc", "start", "stop", "strand", "score", "evalue"])
+    annot.to_csv(sm.output[0], sep="\t", index=True)
 
 
 def main(sm):
     toolbox = {"parse_pfam": parse_pfam,
+               "parse_cmsearch": parse_cmsearch,
                "parse_hmmsearch": parse_hmmsearch,
                "parse_emapper": parse_emapper,
                "parse_rgi": parse_rgi}

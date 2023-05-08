@@ -9,12 +9,14 @@ localrules:
     download_pfam_info,
     press_hmms,
     parse_pfam,
+    parse_cmsearch,
     parse_hmmsearch,
     download_eggnog,
     get_kegg_info,
     parse_emapper,
     download_rgi_data,
-    parse_rgi
+    parse_rgi,
+    parse_hmmsearch
 
 ##### annotation master rule #####
 
@@ -135,6 +137,35 @@ rule infernal:
             --tblout {output} --fmt 2 --clanin {input.cl} {params.db} \
             {input.fastafile} > /dev/null 2>{log}
         """
+
+##### cmscan on custom database
+rule cmsearch:
+    input:
+        fa=results+"/assembly/{assembly}/final_contigs.fa",
+        cm=expand("resources/{cmdb}/{cmdb}.cm.i1{suff}", cmdb = config["annotation"]["cmdb"], suff = ["f","i","m","p"])
+    output:
+        cm=results+"/annotation/{assembly}/{assembly}.{cmdb}.tblout"
+    log:
+        results+"/annotation/{assembly}/{assembly}.{cmdb}.log"
+    conda:
+        "../envs/annotation.yml"
+    resources:
+        runtime = lambda wildcards: 60 * 24
+    params:
+        cm="resources/{cmdb}/{cmdb}.cm"
+    threads: 10
+    shell:
+        """
+        cmsearch --cpu {threads} --tblout {output.cm} {params.cm} {input.fa} >/dev/null 2>{log}
+        """
+
+rule parse_cmsearch:
+    input:
+        rules.cmsearch.output.cm
+    output:
+        results+"/annotation/{assembly}/{assembly}.{cmdb}.parsed.tsv"
+    script:
+        "../scripts/annotation_utils.py"
 
 ##### protein families #####
 
@@ -264,7 +295,8 @@ rule parse_hmmsearch:
     output:
         results+"/annotation/{assembly}/{hmm_db}.parsed.tsv"
     params:
-        evalue = config["hmmsearch"]["evalue"]
+        evalue = config["hmmsearch"]["evalue"],
+        scores = config["hmmsearch"]["scores"]
     script:
         "../scripts/annotation_utils.py"
 

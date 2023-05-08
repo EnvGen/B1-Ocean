@@ -57,7 +57,7 @@ rule kraken_build_standard:
     conda:
         "../envs/kraken.yml"
     resources:
-        runtime=lambda wildcards, attempt: attempt**2*60*24
+        runtime=lambda wildcards, attempt: attempt**2 * 60 * 24
     shell:
         """
         kraken2-build --standard --db {params.dir} --threads {threads} > {log.build} 2>&1
@@ -80,16 +80,61 @@ rule kraken_contigs:
             results_path=config["paths"]["results"])
     params:
         db=config["kraken"]["index_path"],
-        mem=config["kraken"]["mem"]
-    threads: 10
+        mem=config["kraken"]["mem"],
+        confidence=config["kraken"]["confidence"]
+    threads: 20
     resources:
         runtime= lambda wildcards, attempt: attempt**2 * 60 * 4
     conda:
         "../envs/kraken.yml"
     shell:
         """
-        kraken2 {params.mem} --db {params.db} --output {output[0]} \
+        kraken2 {params.mem} --confidence {params.confidence} --db {params.db} --output {output[0]} \
             --report {output[1]} --threads {threads} {input.fa} > {log} 2>&1
+        """
+
+rule krakenuniq_contigs:
+    input:
+        fa=results+"/assembly/{assembly}/final_contigs.fa",
+        db=config["krakenuniq"]["db_path"]
+    output:
+        out=results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.out",
+        report=results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.kreport"
+    log:
+        results+"/annotation/{assembly}/taxonomy/final_contigs.krakenuniq.log"
+    params:
+        db = lambda wildcards, input: os.path.dirname(input.db),
+        preload_size = f"{config['krakenuniq']['threads']*5}G",
+        out = "$TMPDIR/{assembly}.krakenuniq.out"
+    conda:
+        "../envs/krakenuniq.yml"
+    threads: config["krakenuniq"]["threads"]
+    resources:
+        runtime = 60 * 220
+    shell:
+        """
+        krakenuniq --db {params.db} --report-file {output.report} \
+            --output {params.out} --threads {threads} --preload-size {params.preload_size} {input.fa} > {log} 2>&1
+        mv {params.out} {output.out}
+        """
+
+rule parse_kraken_contigs:
+    input:
+        results+"/annotation/{assembly}/taxonomy/final_contigs.{krakentool}.out",
+        "resources/taxonomy/taxonomy.sqlite"
+    output:
+        results+"/annotation/{assembly}/taxonomy/{krakentool}.taxonomy.tsv"
+    log:
+        results+"/annotation/{assembly}/taxonomy/parse_{krakentool}_contigs.log"
+    conda:
+        "../envs/taxonomy.yml"
+    params:
+        ranks = " ".join(config["taxonomy"]["ranks"]),
+        script = "workflow/scripts/parse_kraken_contigs.py",
+        taxdir = lambda wildcards, input: os.path.dirname(input[1])
+    shell:
+        """
+        python {params.script} {input[0]} {output[0]} {params.taxdir} --ranks {params.ranks} > {log} 2>&1
         """
 
 rule kraken_pe:

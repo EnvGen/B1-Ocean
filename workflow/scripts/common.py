@@ -595,6 +595,11 @@ def annotation_input(config, assemblies):
                             results=[results], assembly=[assembly],
                             db=["enzymes", "pathways", "kos", "modules"],
                             norm_method=["counts", "rpkm", "TMM", "RLE", "CSS"])
+        # Add cmsearch annotation
+        if config["annotation"]["cmdb"] != "":
+            results + "/annotation/{assembly}/{assembly}.{cmdb}.parsed.tsv"
+            input += expand("{results}/annotation/{assembly}/{assembly}.{cmdb}.parsed.tsv",
+                            results=[results], assembly=[assembly], cmdb=config["annotation"]["cmdb"])
         # Add PFAM annotation
         if config["annotation"]["pfam"]:
             if config["annotation"]["splits"] > 1:
@@ -609,9 +614,17 @@ def annotation_input(config, assemblies):
             norm_method=["counts", "rpkm", "TMM", "RLE", "CSS"])
         # Add taxonomic annotation
         if config["annotation"]["taxonomy"]:
-            input += expand("{results}/annotation/{assembly}/taxonomy/tax.{counts_type}.tsv",
-                            results=[results], assembly=[assembly],
-                            counts_type=["counts", "rpkm"])
+            tax_tools = []
+            if config["taxonomy"]["krakenuniq_contigs"]:
+                tax_tools.append("krakenuniq")
+            if config["taxonomy"]["kraken_contigs"]:
+                tax_tools.append("kraken")
+            if config["taxonomy"]["contigtax"]:
+                if config["annotation"]["assembly_splits"] > 0:
+                    input.append(f"results/annotation/{assembly}/taxonomy/{assembly}.contigtax.gathered")
+                tax_tools.append("contigtax")
+            input+= expand("{results}/annotation/{assembly}/taxonomy/tax.{tool}.{counts_type}.tsv", results=[results],
+                           assembly=[assembly], counts_type=["counts", "rpkm"], tool=tax_tools)
         # Add Resistance Gene Identifier output
         if config["annotation"]["rgi"]:
             input += expand("{results}/annotation/{assembly}/rgi.parsed.{norm_method}.tsv",

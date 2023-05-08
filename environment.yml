@@ -1,4 +1,4 @@
-name: nbis-meta
+name: B1-ocean
 
 channels:
   - conda-forge

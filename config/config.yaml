@@ -119,6 +119,7 @@ metaspades:
 annotation:
   hmm_dbs: []
   splits: 0
+  assembly_splits: 0
   # run tRNAscan-SE?
   tRNAscan: False
   # run infernal for rRNA identification?
@@ -131,6 +132,10 @@ annotation:
   rgi: False
   # run taxonomic annotation of assembled contigs (using contigtax + sourmash)?
   taxonomy: False
+  # name of cmsearch database
+  # if this is set, there must be files with the pattern 'resources/<cmdb>/<cmdb>.cm.<suff>'
+  # for example if cmdb: thi-box then there must exist 'resources/thi-box/thi-box.cm.i1f' etc.
+  cmdb: ""
   norm_models:
     kos:
       - K06942 # ychF; ribosome-binding ATPase
@@ -175,6 +180,12 @@ hmmsearch:
 
 # params for taxonomic annotation of contigs/orfs
 taxonomy:
+  # Run krakenuniq on assembled contigs?
+  krakenuniq_contigs: False
+  # Run kraken2 on assembled contigs?
+  kraken_contigs: False
+  # Run contigtax on contigs?
+  contigtax: True
   # minimum length of contigs to use for taxonomic annotation
   min_len: 300
   # parameters for contigtax search
@@ -320,6 +331,8 @@ kraken:
   # setting reduce_memory to True makes kraken2 run in "--memory-mapping" mode
   # which avoids loading database into RAM and uses less memory
   reduce_memory: False
+  # Kraken confidence threshold
+  confidence: 0.5
 
 # centrifuge params
 centrifuge:
