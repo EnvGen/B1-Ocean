@@ -84,7 +84,7 @@ rule kraken_contigs:
         confidence=config["kraken"]["confidence"]
     threads: 20
     resources:
-        runtime= lambda wildcards,attempt: attempt ** 2 * 60 * 10
+        runtime= lambda wildcards, attempt: attempt**2 * 60 * 4
     conda:
         "../envs/kraken.yml"
     shell:
