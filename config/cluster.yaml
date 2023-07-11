@@ -1,11 +1,16 @@
 __default__:
   # exchange <staff> with your SLURM account id below
-  account: snic2021-22-184
-
+  account: snic2022-5-87
+  max_cores: 20
   # directories for slurm logs (no need to change these)
   output: "slurm/logs/{rule}.{wildcards}.out"
   error: "slurm/err/{rule}.{wildcards}.err"
 
+#kraken_contigs:
+    #  constraint: "mem1TB"
+#  time: 1440
+trnascan_bins:
+  time: 14400
 megahit:
   time: 14400
   constraint: "mem1TB"
