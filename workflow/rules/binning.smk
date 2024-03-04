@@ -514,7 +514,8 @@ rule gtdbtk_classify:
         suff='fa',
         indir=lambda wildcards, input: os.path.dirname(input.tsv),
         dbdir=lambda wildcards, input: os.path.abspath(os.path.dirname(os.path.dirname(input.met))),
-        outdir=lambda wildcards, output: os.path.dirname(output[0])
+        outdir=lambda wildcards, output: os.path.dirname(output[0]),
+        mash="--mash_db resources/gtdb/mash" if "mash" in config["binning"].keys() and config["binning"]["mash"] else "",
     threads: 20
     resources:
         runtime=lambda wildcards, attempt: attempt**2*60
@@ -530,7 +531,7 @@ rule gtdbtk_classify:
             export GTDBTK_DATA_PATH={params.dbdir}
             gtdbtk classify_wf -x {params.suff} --out_dir {params.outdir} \
                 --cpus {threads} --pplacer_cpus {threads} \
-                --genome_dir {params.indir} > {log} 2>&1
+                --genome_dir {params.indir} {params.mash} > {log} 2>&1
         fi
         """
 

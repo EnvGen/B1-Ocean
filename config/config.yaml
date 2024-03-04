@@ -240,6 +240,8 @@ binning:
   checkm: False
   # run gtdbtk to classify bins phylogenetically?
   gtdbtk: False
+  # run with mashdb as in latest versions of GTDB-TK
+  mash: False
   # calculate average nucleotide identity for binned genomes with fastANI?
   fastani: False
 
